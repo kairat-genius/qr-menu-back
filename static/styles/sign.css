@@ -1,0 +1,525 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    line-height: 24px;
+    font-family: 'Poppins', sans-serif;
+
+    overflow-x: hidden;
+}
+body {
+    
+    height: 100vh;
+}
+
+
+:root {
+    /* SIZES -W -H */
+    --circleW: clamp(90rem , 65vw, 100rem);
+    --circleH: clamp(90rem , 93.5vh, 100rem);
+
+    /* COLOR */
+    --main-color: #15C5CE;
+    --border-color: #E1E1E1;
+    --big-circle-color: #FFF6F3;
+    --static-white: #fff;
+
+    /* BORDER-RADIUS */
+    --border-radius: 5px;
+
+    /* CIRCLE SCALE */
+    --circle-scale: scale(0.45);
+}
+
+
+
+/* BIG CIRCLE */
+.circle {
+    z-index: -1;
+
+    width: var(--circleW);
+    height: var(--circleH);
+
+    max-width: 774px;
+    max-height: 774px;
+
+    background: var(--big-circle-color);
+    border-radius: 50%;
+    
+    position: absolute;
+    top: -250px;
+    right: -250px;
+
+    transition: all 0.5s ease-in;
+}
+
+.circle > img {
+    position: absolute;
+}
+
+#cfirst {
+    top: 37%;
+    left: 20%;
+
+    transform: var(--circle-scale) translate(750%);
+
+    animation: show-f-c 0.5s forwards ease-in-out 0.7s;
+}
+
+@keyframes show-f-c {
+    from {
+        transform: var(--circle-scale) translate(750%);
+    } to {
+        transform: var(--circle-scale) translate(0);
+    }
+}
+
+#csecond {
+    top: 73%;
+    left: 20%;
+
+    transform: var(--circle-scale) translate(750%);
+
+    animation: show-s-c 0.5s forwards ease-in-out 0.3s;
+
+    
+}
+
+@keyframes show-s-c {
+    from {
+        transform: var(--circle-scale) translate(750%);
+    } to {
+        transform: var(--circle-scale) translate(0);
+    }
+}
+
+#cthird {
+    top: 59%;
+    left: 3%;
+
+    transform: var(--circle-scale) translate(400%);
+
+    animation: show-t-c 0.7s forwards ease-in-out 0.9s;
+
+}
+
+@keyframes show-t-c {
+    from {
+        transform: var(--circle-scale) translate(400%);
+    } to {
+        transform: var(--circle-scale) translate(0);
+    }
+}
+
+#cfourth {
+    top: 43%;
+    left: -4%;
+
+    transform: var(--circle-scale) translateY(-220%);
+
+    animation: show-fo-c 0.7s forwards ease-in-out 0.5s;
+}
+
+@keyframes show-fo-c {
+    from {
+        transform: var(--circle-scale) translateY(-220%);
+    } to {
+        transform: var(--circle-scale) translateY(0);
+    }
+}
+
+.move-x {
+    animation: x-m 0.5s forwards ease-in-out;
+}
+
+@keyframes x-m {
+    from {
+        transform: translate(0);
+    } to {
+        transform: translate(60%) translateY(-7%) scale(2.033);
+    }
+}
+
+/* END BIG CIRCLE */
+
+
+
+
+
+
+
+
+
+/* DASHED SVG CIRCLE */
+
+.dashed-svg-circle {
+    position: relative;
+    animation: food-move 60s infinite linear;
+}
+
+@keyframes food-move {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+.dashed-svg-circle img {
+    position: absolute;
+
+    filter: drop-shadow(2px 2px 5px #333);
+}
+
+
+
+/* SVGS imges */
+#first {
+    top: 50%;
+    left: -2.5rem;
+
+    transform: scale(1);
+}
+
+#second {
+    top: 5%;
+    left: -2rem;
+}
+
+#third {
+    top: 80%;
+    left: 4.5rem;
+}
+
+#fourth {
+    bottom: -2rem;
+    right: -2.5rem;
+}
+
+#fifth {
+    bottom: 7.5rem;
+    right: -9rem;
+
+    transform: scale(0.8);
+}
+
+#sixth {
+    bottom: 16rem;
+    right: 5rem;
+}
+
+/* end dvg imges */
+
+.dashed-svg-circle svg {
+    z-index: -1;
+    animation: circle-move 20s infinite linear;
+}
+
+@keyframes circle-move {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+main > div + div + div {
+    position: absolute;
+    top: 7rem;
+    right: 7rem;
+}
+
+/* END DASHED SVG CIRCLE */
+
+
+
+
+
+
+
+/* MAIN ELEMENT */
+
+main {
+    height: 100%;
+    width: 100%;
+
+
+    display: flex;
+    justify-content: baseline;
+    align-items: center;
+}
+
+/* END MAIN */
+
+
+
+
+
+
+
+
+
+/* SIGN IN AND SIGN UP ELEMENT */
+
+#sign {
+    max-width: 310px;
+    z-index: 10;
+    margin: 0 0 0 calc(4vw * 4);
+}
+
+.sign-into-container > .sign-into-headers > h3 {
+    font-size: 2rem;
+    white-space: nowrap;
+}
+
+@keyframes hide-h3 {
+  
+    0% {
+        transform: translateY(0);
+    } 
+
+    100% {
+        transform: translateY(-100%);
+    }
+
+} 
+
+@keyframes show-h3 {
+  
+    0% {
+        transform: translateY(-100%);
+    } 
+
+    100% {
+        transform: translateY(0);
+    }
+
+} 
+
+.sign-into-container > .sign-into-headers > p {
+    font-size: 1.5rem;
+    margin: 1rem 0 0 0;
+    white-space: nowrap;
+
+}
+
+
+.sign-into-container > .sign-into-inputs > div {
+    display: flex;
+    flex-flow: column nowrap;
+
+    margin: 2rem 0;
+}
+
+.sign-into-container > .sign-into-inputs > div > label {
+    margin: 0 0 0.3rem 0;
+    position: relative;
+
+    width: min-content;
+    white-space: nowrap;
+}
+
+.sign-into-container > .sign-into-inputs > div > label.before-active::after {
+    content: '*';
+    color: #ff0000;
+
+    position: absolute;
+    right: -0.8rem;
+
+}
+
+.sign-into-container > .sign-into-inputs > div > input {
+    padding: 0.8rem 1rem;
+    outline: none;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.sign-into-container > .sign-into-inputs > div > input:focus {
+    border-color: var(--main-color);
+}
+
+.sign-into-container > .sign-into-remember-me-section {
+    font-size: 0.7rem;
+
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sign-into-container > .sign-into-remember-me-section > div > span {
+    color: var(--main-color);
+    text-decoration: underline;
+
+    cursor: pointer;
+}
+
+.sign-into-container > .sign-into-remember-me-section > div > span:hover {
+    filter: brightness(90%);
+}
+
+.sign-into-container > .sign-into-send-login-info {
+    margin: 2rem 0;
+}
+
+.sign-into-container > .sign-into-send-login-info > button {
+    width: 100%;
+    height: 3rem;
+
+    cursor: pointer;
+
+    border: none;
+    background: var(--main-color);
+    border-radius: var(--border-radius);
+    color: var(--static-white);
+
+    transition: all 0.3s ease-in-out;
+}
+
+.sign-into-container > .sign-into-send-login-info > button:active {
+    transform: scale(0.95);
+}
+
+.sign-into-container > .create-account-section-link > p {
+    text-align: center;
+}
+
+.sign-into-container > .create-account-section-link > p > span:hover {
+    filter: brightness(90%);
+}
+
+@keyframes show-email-div {
+    from {
+        opacity: 0;
+    } to {
+        opacity: 1;
+    }
+}
+
+
+.hide-div {
+    animation: hide-d 0.3s forwards ease-in;
+}
+
+/* END - SIGN IN AND SIGN UP ELEMENT */
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 630px) {
+    
+    /* SIGN IN AND SIGN UP ELEMENT */
+    .sign-into-container {
+        max-width: 310px;
+    }
+
+    #sign {
+        margin: 0;
+    }
+    
+    main {
+        width: 100%;
+        height: 100%;
+        
+        margin: 0;
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    /* END - SIGN IN AND SIGN UP ELEMENT */
+    
+    
+    
+    
+    
+    
+    /* DASHED SVG CIRCLE PARENT DIV */
+    main > div + div + div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        position: absolute;
+        top: -10rem;
+        left: -15rem;
+    }
+    
+    /* END - DASHED SVG CIRCLE PARENT DIV */
+    
+}
+
+
+
+
+/* RESET PAGE */
+.svg-elem-container > svg > circle {
+    opacity: 0;
+
+    animation: circle-s 0.2s forwards ease-in;
+}
+
+@keyframes circle-s {
+    from {
+        opacity: 0;
+    } to {
+        opacity: 1;
+    }
+}
+
+.reset-button-container > button:active {
+    transform: scale(0.95);
+}
+
+
+.up {
+    animation: up-hide 0.7s forwards ease-in;
+}
+
+@keyframes up-hide {
+    from {
+        transform: translateY(0);
+    } to {
+        transform: translateY(-200%);
+    }
+}
+
+.svg-elem-container > svg > polyline {
+    animation: show-line 0.7s forwards ease-in 0.3s;
+}
+
+@keyframes show-line {
+    from {
+        stroke-dashoffset: 50;
+    } to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.hide {
+    animation: h 0.3s forwards ease-in;
+}
+
+@keyframes h {
+    from {
+        opacity: 1;
+    } to {
+        opacity: 0;
+        display: none;
+    }
+}
+
+/* END RESET PAGE */

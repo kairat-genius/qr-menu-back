@@ -4,21 +4,9 @@ from db import Data
 import json
 
 app = Flask(__name__, template_folder='static/templates')
-
-
-
-@app.route('/')
-def sign_page():
-    return render_template('sign.html')
-
-# ################################################
-
-@app.route('/test')
-def index():
-    return render_template('index.html')
-
-
+base = Data()
 auth = Authefication()
+
 @app.route('/api/authentication', methods=['POST'])
 def authentication():
 
@@ -27,9 +15,9 @@ def authentication():
 
             case 'POST':
                 data = json.loads(request.data.decode())
-                
+
                 create = auth.auth(**data)
-                
+
                 match create:
                     case 'insert_restik':
                         return app.response_class(response=json.dumps({
@@ -51,7 +39,7 @@ def authentication():
                         'from': 'user exists',
                         'msg' : 'Користувач з данним ім\'ям вже існує',
                     }))
-                    
+
                     case 'USER EMAIL ALREADY REGISTERED':
                         return app.response_class(response=json.dumps({
                         'status': 400,
@@ -86,7 +74,7 @@ def authentication():
                             'msg' : 'Authentication succesful',
                             'hash_key' : create
                         }))
-            
+
             case _:
                 return app.response_class(response=json.dumps({
                     'status': 405,
@@ -109,7 +97,7 @@ def login():
         match request.method:
 
             case 'POST':
-                
+
                 data = json.loads(request.data.decode())
 
                 match data['method']:
@@ -121,13 +109,13 @@ def login():
                                 'status': 200,
                                 'data' : user,
                             }))
-                        
+
                         else:
                             return app.response_class(response=json.dumps({
                                 'status': 400,
                                 'data' : 'USER NOT EXISTS',
                             }))
-                        
+
                     case 'authUser':
                         authuser = log.authUser(data['password'], data['email'])
                         match authuser:
@@ -160,13 +148,6 @@ def login():
                     'msg' : 'BAD GATEAWAY',
                 }))
 
-
-base = Data()
-@app.route('/api/category', methods=['POST'])
-def category():
-    ...
-
-
 @app.route('/admin_panel/<restaurant>')
 def admin(restaurant):
     try:
@@ -179,23 +160,37 @@ def admin(restaurant):
         return jsonify({'error': f'Ошибка при получении данных о ресторане: {str(e)}'})
 
 
-@app.route('/admin_panel/<restaurant>/settings', methods=['POST'])
+@app.route('/admin_panel/<restaurant>/settings', methods=['GET', 'POST'])
 def settings(restaurant):
-    if request.method == 'POST':
+    if request.method == 'GET':
+        # Получение существующих данных из базы данных
+        old_data = base.get_user_data(restaurant)
+        return render_template('test.html', restaurant=restaurant, old_data=old_data)
+
+    elif request.method == 'POST':
         try:
             # Обработка данных, отправленных формой в формате JSON
             data = request.get_json()
-            email = data.get('email')
-            password = data.get('password')
-            address = data.get('address')
-            new_restaurant_name = data.get('restaurant')
+            base.update_user_data(
+                restaurant,
+                data.get('email'),
+                data.get('password'),
+                data.get('address'),
+                data.get('new_restaurant_name'),
+                data.get('start_day'),
+                data.get('end_day'),
+                data.get('start_time'),
+                data.get('end_time'),
 
-            base.update_user_data(restaurant, email, password, address, new_restaurant_name)
+            )
 
             # Возврат данных в формате JSON
             return jsonify({'message': 'Changes saved successfully'})
         except Exception as e:
+            print(f"Error: {str(e)}")
             return jsonify({'message': f'Error: {str(e)}'}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True, host=('0.0.0.0'), port=8000)
+

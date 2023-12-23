@@ -1,0 +1,31 @@
+<script>
+   
+   fetch('/api/authentication', {
+        'method' : 'POST',
+        'headers' : {'Content-type' : 'application/json'},
+        'body' : JSON.stringify({
+            'username': 'dchnkoo1_2',
+            'email' : 'drchn@gmail.com',
+            'password' : 'Dchn78956_',
+            'restaurant' : 'Vasilina'
+        })
+        
+    })
+    .then(data => data.json())
+    .then(data => console.log(data))
+    
+    fetch('/api/login', {
+         'method' : 'POST',
+         'headers' : {'Content-type' : 'application/json'},
+         'body' : JSON.stringify({
+            'method' : 'authUser',
+            'password': 'Dchn78956_',
+            'email': 'drchn@gmail.com'
+         })
+         
+     })
+     .then(data => data.json())
+     .then(data => console.log(data))
+
+
+</script>

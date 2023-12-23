@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Page</title>
+
+    <!-- CSS Styles -->
+    <link rel="stylesheet" href="/static/styles/sign.css">
+    <!-- END -->
+
+    <!-- FONT Poppins 400 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Poppins&display=swap" rel="stylesheet">
+    <!-- END -->
+
+    <!-- FONT Playfair Display 700 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Playfair+Display:wght@700&family=Poppins&display=swap" rel="stylesheet">
+    <!-- END -->
+
+</head>
+<body>
+
+    <main>
+        <!-- big circle element -->
+        <div class="circle"></div>
+        <!-- END -->
+        
+        
+        <div id="sign">
+            <!-- sign in to -->
+            <div class="sign-into-container">
+    
+                <!-- sign into headers -->
+                <div class="sign-into-headers">
+                    <h3 style="font-family: 'Playfair Display', sans-serif;">Sign in to</h3>
+                    <p>restourant control system</p>
+                </div>
+                <!-- END -->
+    
+                <!-- sign into inputs -->
+                <div class="sign-into-inputs">
+                    <div class="sign-into-input-username">
+                        <label for="username">User name</label>
+                        <input autofocus type="text" placeholder="Enter your name or email" name="username" id="username">
+                    </div>
+                    <div class="sign-into-input-password">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" placeholder="Enter your Password">
+                    </div>
+                </div>
+                <!-- END -->
+                <!-- Remeber and forgot password btns section -->
+                <div class="sign-into-remember-me-section">
+                    <div>
+                        <input name="remember-me" type="checkbox" id="remember-me">
+                        <label for="remember-me">Remember me</label>
+                    </div>
+                    <div>
+                        <span id="sign-into-forgot-password">Forgot Password?</span>
+                    </div>
+                </div>
+                <!-- END -->
+                <!-- LOGIN TO ACCOUNT BUTTON -->
+                <div class="sign-into-send-login-info">
+                    <button id="sign-into-button">Login</button>
+                    <button style="display: none;" id="create-account-button">Register</button>
+                </div>
+                <!-- END -->
+                <!-- CREATE ACCOUNT LINK -->
+                <div class="create-account-section-link">
+                    <p class="sign-in">Don'y have an Account ? <span id="sign-in" style="font-weight: bold;color: #15C5CE;cursor: pointer;">Sign up</span></p>
+                    <p class="sign-up" style="display: none;">Already have an Account ? <span id="sign-up" style="font-weight:bold;color:#15C5CE;cursor:pointer;">Sign in</span></p>
+                </div>
+                <!-- END -->
+            </div>
+            <!-- END -->
+        </div>
+        
+
+    
+        <div id="animated-circle-container">
+            <!-- DASHED CIRCLE -->
+            <div class="dashed-svg-circle">
+                <svg viewbox="0 0 346 346" width="346" height="346">
+                    <circle id="svg-circle" r="168" fill="none" cx="50%" cy="50%" stroke="#EA6A12" stroke-width="4px" stroke-dasharray="25px"></circle>
+                </svg>
+                <img src="/static/images/sign_up/Frame 37293.png" alt="food frame" id="first">
+                <img src="/static/images/sign_up/Frame 37294.png" alt="food frame" id="second">
+                <img src="/static/images/sign_up/Frame 37295.png" alt="food frame" id="third">
+                <img src="/static/images/sign_up/Frame 37296.png" alt="food frame" id="fourth">
+                <img src="/static/images/sign_up/Frame 37298.png" alt="food frame" id="fifth">
+                <img src="/static/images/sign_up/Frame 37299.png" alt="food frame" id="sixth">
+            </div>
+            <!-- END -->
+
+        </div>
+    </main>
+
+    <script src="/static/js/sign_up.js"></script>
+    <script src="/static/js/forgot_pass_btn.js"></script>
+
+</body>
+</html>
