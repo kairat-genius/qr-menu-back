@@ -20,6 +20,20 @@ class Data:
         except Exception as e:
             raise e
 
+    def get_user_data_password(self, restaurant_name):
+        try:
+            query = '''
+                SELECT Authefication.password
+                FROM Authefication
+                INNER JOIN Restaurant ON Authefication.hashf = Restaurant.hashf
+                WHERE Restaurant.restaurant = ?
+            '''
+            user_data = self._db.execute(query, restaurant_name)
+            return user_data[0] if user_data else None
+        except Exception as e:
+            raise e
+
+    """"""
     def get_user_data(self, restaurant_name):
         try:
             query = '''
@@ -33,12 +47,13 @@ class Data:
         except Exception as e:
             raise e
 
+    """Изменения, сохранения данных в базе данных"""
     def update_user_data(self, restaurant, email, password, address, new_restaurant, start_day, end_day, start_time,
-                         end_time):
+                         end_time, logo):
         auth_instance = Authefication()
 
         # Получаем старый хешированный пароль
-        old_data = self.get_user_data(restaurant)
+        old_data = self.get_user_data_password(restaurant)
         old_hashed_password = old_data.get('password')
 
         # Хешируем новый пароль, если он передан
@@ -51,13 +66,12 @@ class Data:
         '''
         restaurant_update_query = '''
             UPDATE Restaurant
-            SET restaurant=?, address=?, start_day=?, end_day=?, start_time=?, end_time=?
+            SET restaurant=?, address=?, start_day=?, end_day=?, start_time=?, end_time=?, logo=?
             WHERE restaurant = ?
         '''
-        self._db.execute(restaurant_update_query, new_restaurant, address, start_day, end_day, start_time, end_time,
+        self._db.execute(restaurant_update_query, new_restaurant, address, start_day, end_day, start_time, end_time, logo,
                          restaurant)
         self._db.execute(auth_update_query, email, hashed_password, restaurant)
-
 
 
 

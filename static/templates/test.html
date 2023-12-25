@@ -30,7 +30,7 @@
     <label for="new_restaurant_name">New Restaurant Name:</label>
     <input type="text" id="new_restaurant_name" name="new_restaurant_name" value="{{ old_data.restaurant }}" required>
 
-    <!-- Новые поля -->
+
     <label for="start_day">Day of Week:</label>
     <select id="start_day" name="start_day">
         <option value="{{ old_data.start_day }}">{{ old_data.start_day }}</option>
@@ -60,33 +60,51 @@
 
     <label for="end_time">End Time:</label>
     <input type="time" id="end_time" name="end_time" value="{{ old_data.end_time }}" required>
-    
+
+    <label for="logo">Logo (Image):</label>
+    <input type="file" id="logo" name="logo" accept="image/*">
+
+     <img id="logoImage" src="{{ old_data.logo }}" alt="Restaurant Logo">
+
 
     <button type="button" onclick="submitForm()">Save Changes</button>
 </form>
 
 <script>
     function submitForm() {
-        const data = {
+        const formData = {
             email: document.getElementById('email').value,
             password: document.getElementById('password').value,
             address: document.getElementById('address').value,
             restaurant: '{{ restaurant }}',
             new_restaurant_name: document.getElementById('new_restaurant_name').value,
-
             start_day: document.getElementById('start_day').value,
             end_day: document.getElementById('end_day').value,
             start_time: document.getElementById('start_time').value,
             end_time: document.getElementById('end_time').value,
-
+            logo: '{{ old_data.logo }}',  // Use old logo data by default
         };
 
+        const logoInput = document.getElementById('logo');
+        if (logoInput.files.length > 0) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                formData.logo = e.target.result.split(',')[1];
+                sendFormData(formData);
+            };
+            reader.readAsDataURL(logoInput.files[0]);
+        } else {
+            sendFormData(formData);
+        }
+    }
+
+    function sendFormData(formData) {
         fetch('/admin_panel/{{ restaurant }}/settings', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(formData),
         })
         .then(response => response.json())
         .then(data => {
@@ -99,6 +117,17 @@
         });
     }
 
+    function displayLogo(base64Data) {
+        const logoImage = document.getElementById('logoImage');
+        logoImage.src = 'data:image/png;base64,' + base64Data; // Assuming the image is in PNG format
+    }
+
+    window.onload = function () {
+        const oldLogoData = '{{ old_data.logo }}';
+        if (oldLogoData) {
+            displayLogo(oldLogoData);
+        }
+    };
 </script>
 </body>
 </html>

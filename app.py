@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, jsonify
 from auth import Authefication, Login
 from db import Data
 import json
+import logging
 
 app = Flask(__name__, template_folder='static/templates')
 base = Data()
@@ -171,6 +172,13 @@ def settings(restaurant):
         try:
             # Обработка данных, отправленных формой в формате JSON
             data = request.get_json()
+
+            # Обработка изображения (если оно включено)
+            logo = None
+            if 'logo' in data:
+                logo = data.pop('logo')
+
+            # отправка на сохранения данных
             base.update_user_data(
                 restaurant,
                 data.get('email'),
@@ -181,13 +189,13 @@ def settings(restaurant):
                 data.get('end_day'),
                 data.get('start_time'),
                 data.get('end_time'),
-
+                logo
             )
 
             # Возврат данных в формате JSON
             return jsonify({'message': 'Changes saved successfully'})
         except Exception as e:
-            print(f"Error: {str(e)}")
+            logging.error(f"Error: {str(e)}")
             return jsonify({'message': f'Error: {str(e)}'}), 500
 
 
