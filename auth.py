@@ -19,13 +19,26 @@ class Authefication:
                     hashf VARCHAR UNIQUE,
                     restaurant VARCHAR NOT NULL,
                     address VARCHAR,
-                    category_id INTEGER,
+                    dishes_id INTEGER,
                     start_day VARCHAR,
                     end_day VARCHAR,
                     start_time TIME,
                     end_time TIME,
                     logo BLOB,
-                    FOREIGN KEY (category_id) REFERENCES Categories(id) ON DELETE CASCADE)""")
+                    FOREIGN KEY (dishes_id) REFERENCES Dishes(id) ON DELETE CASCADE)""")
+
+    def _insert_restik(self, hashf, rest, address=None, dishes_id=None, start_day=None, end_day=None, start_time=None,
+                       end_time=None, logo=None) -> bool:
+        """ INSERT DATA TO Restaurant table """
+        try:
+            self._db.execute(
+                """INSERT INTO Restaurant(hashf, restaurant, address, dishes_id, start_day, end_day, start_time, end_time, logo) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                hashf, rest, address, dishes_id, start_day, end_day, start_time, end_time, logo)
+
+        except:
+            return False
+        else:
+            return True
 
     def _create_categories_table(self) -> None:
         """ Create Categories table if not exists """
@@ -38,34 +51,31 @@ class Authefication:
         """ Create Dishes table if not exists """
         self._db.execute(r"""CREATE TABLE IF NOT EXISTS Dishes (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    img VARCHAR,
+                    img BLOB,
                     name VARCHAR NOT NULL,
                     url VARCHAR,
-                    description TEXT,
+                    ingredient_id INTEGER,
+                    price INTEGER,
+                    weight INTEGER,
+                    comment VARCHAR,
                     category_id INTEGER,
+                    FOREIGN KEY (ingredient_id) REFERENCES Ingredients(id),
                     FOREIGN KEY (category_id) REFERENCES Categories(id) ON DELETE CASCADE)""")
 
-    def _insert_restik(self, hashf, rest, category_id=None, start_day=None, end_day=None, start_time=None, end_time=None, logo=None) -> bool:
-        """ INSERT DATA TO Restaurant table """
-        try:
-            self._db.execute("""INSERT INTO Restaurant(hashf, restaurant, category_id, start_day, end_day, start_time, end_time, logo) VALUES(?, ?, ?, ?, ?, ?, ?, ?)""",
-                             hashf, rest, category_id, start_day, end_day, start_time, end_time, logo)
+    def _create_ingredients_table(self) -> None:
+        """ Create Ingredients table if not exists """
+        self._db.execute(r"""CREATE TABLE IF NOT EXISTS Ingredients (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ingredient VARCHAR)""")
 
-        except:
-            return False
-        else:
-            return True
-
-    def _insert_dish(self, img, name, url, description, category_id) -> bool:
-        """ Ввод блюд """
-        try:
-            self._db.execute("""INSERT INTO Dishes(img, name, url, description, category_id) VALUES(?, ?, ?, ?, ?)""",
-                             img, name, url, description, category_id)
-
-        except:
-            return False
-        else:
-            return True
+    def _create_tables(self) -> None:
+        """ Create Tables (столы) if not exists """
+        self._db.execute(r"""CREATE TABLE IF NOT EXISTS Tables (
+                    id INTEGER PRIMARY KEY,
+                    menu_link VARCHAR,
+                    qr_code VARCHAR,
+                    restaurant_id INTEGER,
+                    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(id) ON DELETE CASCADE)""")
 
     def _create_auth_table(self) -> None:
         """ Create autentication table if not exists """
@@ -195,3 +205,5 @@ auth_instance._create_dishes_table()
 auth_instance._create_restik_table()
 auth_instance._create_categories_table()
 auth_instance._create_auth_table()
+auth_instance._create_tables()
+auth_instance._create_ingredients_table()

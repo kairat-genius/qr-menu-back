@@ -166,6 +166,7 @@ def settings(restaurant):
     if request.method == 'GET':
         # Получение существующих данных из базы данных
         old_data = base.get_user_data(restaurant)
+        # return jsonify(restaurant=restaurant, old_data=old_data)
         return render_template('test.html', restaurant=restaurant, old_data=old_data)
 
     elif request.method == 'POST':
@@ -197,6 +198,39 @@ def settings(restaurant):
         except Exception as e:
             logging.error(f"Error: {str(e)}")
             return jsonify({'message': f'Error: {str(e)}'}), 500
+
+
+@app.route('/admin_panel/<restaurant>/tables', methods=['GET', 'DELETE'])
+def tables(restaurant):
+    if request.method == 'GET':
+        table_data = base.get_table_data(restaurant)
+        return jsonify({'tables': table_data})
+
+    elif request.method == 'DELETE':
+        try:
+            # ID стола из параметра запроса
+            table_id_to_delete = int(request.args.get('id'))
+            # удаления стола из базы данных
+            deleted_successfully = base.delete_table(restaurant, table_id_to_delete)
+
+            if deleted_successfully:
+                return jsonify({'message': 'Table deleted successfully'})
+            else:
+                return jsonify({'message': 'Error deleting table'}), 500
+
+        except Exception as e:
+            logging.error(f"Error: {str(e)}")
+            return jsonify({'message': f'Error: {str(e)}'}), 500
+
+# @app.route('/admin_panel/<restaurant>/tables/add', methods='PUT')
+# def table_add(restaurant):
+#     if request.method == 'PUT':
+#
+@app.route('/admin_panel/<restaurant>/menu', methods=['GET'])
+def menu(restaurant):
+    if request.method == 'GET':
+        menu_data = base.get_menu_data(restaurant)
+        return jsonify({'menu': menu_data})
 
 
 if __name__ == "__main__":

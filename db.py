@@ -2,6 +2,7 @@ from cs50 import SQL
 import json
 from auth import Authefication
 
+
 class Data:
     """ class manipulate with category data """
 
@@ -12,6 +13,7 @@ class Data:
 
     """Код админ панели"""
 
+    """Взятие название ресторана"""
 
     def get_restaurant_data(self, restaurant_name):
         try:
@@ -19,6 +21,8 @@ class Data:
             return restaurant_data[0] if restaurant_data else None
         except Exception as e:
             raise e
+
+    """Взятие паролей из базы данных"""
 
     def get_user_data_password(self, restaurant_name):
         try:
@@ -33,7 +37,8 @@ class Data:
         except Exception as e:
             raise e
 
-    """"""
+    """Взятие данных из базы данных"""
+
     def get_user_data(self, restaurant_name):
         try:
             query = '''
@@ -47,7 +52,52 @@ class Data:
         except Exception as e:
             raise e
 
-    """Изменения, сохранения данных в базе данных"""
+    """Взятие данных menu из таблицы базы данных из таблицы Dishes(блюд)"""
+
+    def get_menu_data(self, restaurant_name):
+        try:
+            query = '''
+                SELECT Dishes.name, Dishes.img, Dishes.weight, Dishes.price, Categories.category, Ingredients.ingredient
+                FROM Dishes
+                JOIN Ingredients ON Dishes.ingredient_id = Ingredients.id
+                JOIN Categories ON Dishes.category_id = Categories.id
+                JOIN Restaurant ON Dishes.id = Restaurant.dishes_id
+                WHERE Restaurant.restaurant = ?
+            '''
+            menu_data = self._db.execute(query, restaurant_name)
+            return menu_data if menu_data else None
+        except Exception as e:
+            raise e
+
+    """Взятие данных из таблицы базы данных Tables(столы) """
+    def get_table_data(self, restaurant_name):
+        try:
+            query = '''
+                SELECT Tables.id, Tables.menu_link, Tables.qr_code 
+                FROM Tables 
+                JOIN Restaurant ON Tables.restaurant_id = Restaurant.id
+                WHERE Restaurant.restaurant = ?
+            '''
+            table_data = self._db.execute(query, restaurant_name)
+            return table_data if table_data else None
+        except Exception as e:
+            raise e
+
+    """ Удаление стола """
+    def delete_table(self, restaurant_name, id):
+        try:
+            query = '''
+                DELETE FROM Tables
+                WHERE id = ? AND restaurant_id = (SELECT id FROM Restaurant WHERE restaurant = ?)
+            '''
+            self._db.execute(query, id, restaurant_name)
+            return True
+        except Exception as e:
+            print(f"Error in delete_table: {str(e)}")
+            return False
+
+
+    """Изменения, сохранения данных в базе данных Settings"""
     def update_user_data(self, restaurant, email, password, address, new_restaurant, start_day, end_day, start_time,
                          end_time, logo):
         auth_instance = Authefication()
@@ -69,10 +119,11 @@ class Data:
             SET restaurant=?, address=?, start_day=?, end_day=?, start_time=?, end_time=?, logo=?
             WHERE restaurant = ?
         '''
-        self._db.execute(restaurant_update_query, new_restaurant, address, start_day, end_day, start_time, end_time, logo,
+        self._db.execute(restaurant_update_query, new_restaurant, address, start_day, end_day, start_time, end_time,
+                         logo,
                          restaurant)
         self._db.execute(auth_update_query, email, hashed_password, restaurant)
 
-
-
+    """Изменения, сохранения данных в базе данных add a new tables"""
+    # def update_table_data(self):
 
