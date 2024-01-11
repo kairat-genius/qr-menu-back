@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Menu</title>
+</head>
+
+<body>
+
+<h1>Edit Menu</h1>
+
+<form id="editMenuForm">
+
+    <h2>Existing Menu</h2>
+    <ul id="existingMenu">
+        <li>
+            <label for="name">Dish Name:</label>
+            <input type="text" id="name" name="name" value="{{ menu.name }}" required>
+
+            <label for="img">img (Image):</label>
+            <input type="file" id="img" name="img" accept="image/*">
+
+
+            <img id="ImgImage" src="{{ menu.img }}" alt="dishes img">
+
+            <label for="weight">Dish Weight:</label>
+            <input type="text" id="weight" name="weight" value="{{ menu.weight }}" required>
+
+            <label for="price">Dish Price:</label>
+            <input type="text" id="price" name="price" value="{{ menu.price }}" required>
+
+            <label for="comment">Dish Comment:</label>
+            <input type="text" id="comment" name="comment" value="{{ menu.comment }}" required>
+        </li>
+    </ul>
+
+
+
+    <button type="button" onclick="submitForm()">Save Changes</button>
+</form>
+
+<script>
+    function submitForm() {
+        const formData = {
+            name: document.getElementById('name').value,
+            restaurant: '{{ restaurant }}',
+            dishes_url: '{{ dishes_url }}',
+            weight: document.getElementById('weight').value,
+            price: document.getElementById('price').value,
+            comment: document.getElementById('comment').value,
+            img: '{{ menu.img }}'
+        };
+
+        const ImgInput = document.getElementById('img');
+        if (ImgInput.files.length > 0) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                formData.img = e.target.result.split(',')[1];
+                sendFormData(formData);
+            };
+            reader.readAsDataURL(ImgInput.files[0]);
+        } else {
+            sendFormData(formData);
+        }
+    }
+
+    function sendFormData(formData) {
+        fetch('/admin_panel/{{ restaurant }}/menu_add/{{ dishes_url }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            window.location.reload();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('Error occurred. Please try again.');
+        });
+    }
+
+    function displayImg(base64Data) {
+        const ImgImage = document.getElementById('ImgImage');
+        ImgImage.src = 'data:image/png;base64,' + base64Data;
+    }
+
+    window.onload = function () {
+        const oldImgData = '{{ menu.img }}';
+        if (oldImgData) {
+            displayImg(oldImgData);
+        }
+    };
+</script>
+
+</body>
+</html>

@@ -91,18 +91,11 @@ def authentication():
 log = Login()
 @app.route('/api/login', methods=['POST'])
 def login():
-
     try:
-
-
         match request.method:
-
             case 'POST':
-
                 data = json.loads(request.data.decode())
-
                 match data['method']:
-
                     case 'loginUser':
                         user = log.loginUser(data['key'])
                         if user:
@@ -110,13 +103,11 @@ def login():
                                 'status': 200,
                                 'data' : user,
                             }))
-
                         else:
                             return app.response_class(response=json.dumps({
                                 'status': 400,
                                 'data' : 'USER NOT EXISTS',
                             }))
-
                     case 'authUser':
                         authuser = log.authUser(data['password'], data['email'])
                         match authuser:
@@ -135,7 +126,6 @@ def login():
                                     'status': 200,
                                     'data' : authuser,
                                 }))
-
             case _:
                 return app.response_class(response=json.dumps({
                     'status': 405,
@@ -178,6 +168,8 @@ def settings(restaurant):
             logo = None
             if 'logo' in data:
                 logo = data.pop('logo')
+
+
 
             # отправка на сохранения данных
             base.update_user_data(
@@ -226,11 +218,64 @@ def tables(restaurant):
 # def table_add(restaurant):
 #     if request.method == 'PUT':
 #
-@app.route('/admin_panel/<restaurant>/menu', methods=['GET'])
+@app.route('/admin_panel/<restaurant>/menu', methods=['GET', 'DELETE'])
 def menu(restaurant):
     if request.method == 'GET':
         menu_data = base.get_menu_data(restaurant)
         return jsonify({'menu': menu_data})
+
+
+    elif request.method == 'DELETE':
+        try:
+            # ID меню из параметра запроса
+            dishes_id_to_delete = int(request.args.get('id'))
+            # удаления меню из базы данных
+            deleted_successfully = base.delete_dishes(restaurant, dishes_id_to_delete)
+            if deleted_successfully:
+                return jsonify({'message': 'Menu deleted successfully'})
+            else:
+                return jsonify({'message': 'Error deleting menu'}), 500
+
+        except Exception as e:
+            logging.error(f"Error: {str(e)}")
+            return jsonify({'message': f'Error: {str(e)}'}), 500
+
+
+@app.route('/admin_panel/<restaurant>/menu_add/<dishes_url>', methods=['GET', 'POST'])
+def menu_add(restaurant, dishes_url):
+    if request.method == 'GET':
+        menu_old = base.get_menu_data(restaurant, dishes_url)
+        return render_template('testss.html', dishes_url=dishes_url, restaurant=restaurant, menu=menu_old)
+
+    elif request.method == 'POST':
+        try:
+            # Обработка данных, отправленных формой в формате JSON
+            data = request.get_json()
+
+            img = None
+            if 'img' in data:
+                img = data.pop('img')
+
+
+            # отправка на сохранения данных
+            base.update_menu_data(
+                data.get('name'),
+                img,
+                data.get('price'),
+                data.get('weight'),
+                data.get('comment'),
+                data.get('category'),
+                data.get('ingredient'),
+                restaurant,
+                dishes_url,
+            )
+
+            # Возврат данных в формате JSON
+            return jsonify({'message': 'Changes saved successfully'})
+        except Exception as e:
+            logging.error(f"Error: {str(e)}")
+            return jsonify({'message': f'Error: {str(e)}'}), 500
+
 
 
 if __name__ == "__main__":

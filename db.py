@@ -54,20 +54,36 @@ class Data:
 
     """Взятие данных menu из таблицы базы данных из таблицы Dishes(блюд)"""
 
-    def get_menu_data(self, restaurant_name):
+    def get_menu_data(self, restaurant_name, dishes_url=None):
         try:
-            query = '''
-                SELECT Dishes.name, Dishes.img, Dishes.weight, Dishes.price, Categories.category, Ingredients.ingredient
-                FROM Dishes
-                JOIN Ingredients ON Dishes.ingredient_id = Ingredients.id
-                JOIN Categories ON Dishes.category_id = Categories.id
-                JOIN Restaurant ON Dishes.id = Restaurant.dishes_id
-                WHERE Restaurant.restaurant = ?
-            '''
-            menu_data = self._db.execute(query, restaurant_name)
-            return menu_data if menu_data else None
+            if dishes_url:
+                # Используем фильтрацию по имени блюда, если dishes_name передан
+                query = '''
+                    SELECT Dishes.name, Dishes.img, Dishes.weight, Dishes.price, Dishes.comment, Categories.category, Ingredients.ingredient
+                    FROM Dishes
+                    JOIN Ingredients ON Dishes.ingredient_id = Ingredients.id
+                    JOIN Categories ON Dishes.category_id = Categories.id
+                    JOIN Restaurant ON Categories.restaurant_id = Restaurant.id
+                    WHERE Restaurant.restaurant = ? AND Dishes.url = ?
+                '''
+                menu_data = self._db.execute(query, restaurant_name, dishes_url)
+                return menu_data[0] if menu_data else None
+            else:
+                # В противном случае, получаем все блюда
+                query = '''
+                    SELECT Dishes.name, Dishes.img, Dishes.weight, Dishes.price, Dishes.comment, Categories.category, Ingredients.ingredient
+                    FROM Dishes
+                    JOIN Ingredients ON Dishes.ingredient_id = Ingredients.id
+                    JOIN Categories ON Dishes.category_id = Categories.id
+                    JOIN Restaurant ON Categories.restaurant_id = Restaurant.id
+                    WHERE Restaurant.restaurant = ?
+                '''
+                menu_data = self._db.execute(query, restaurant_name)
+                return menu_data if menu_data else None
         except Exception as e:
             raise e
+
+
 
     """Взятие данных из таблицы базы данных Tables(столы) """
     def get_table_data(self, restaurant_name):
@@ -95,6 +111,20 @@ class Data:
         except Exception as e:
             print(f"Error in delete_table: {str(e)}")
             return False
+
+    """ Удаление блюда """
+    def delete_dishes(self, restaurant_name, id):
+        try:
+            query = '''
+                DELETE FROM Dishes
+                WHERE id = ? AND category_id IN (SELECT id FROM Categories WHERE restaurant_id = (SELECT id FROM Restaurant WHERE restaurant = ?))
+            '''
+            self._db.execute(query, id, restaurant_name)
+            return True
+        except Exception as e:
+            print(f"Error in delete_table: {str(e)}")
+            return False
+
 
 
     """Изменения, сохранения данных в базе данных Settings"""
@@ -126,4 +156,38 @@ class Data:
 
     """Изменения, сохранения данных в базе данных add a new tables"""
     # def update_table_data(self):
+
+    def update_menu_data(self, name, img, price, weight, comment, category, ingredient, restaurant, dishes_url):
+        dishes_update_query = '''
+            UPDATE Dishes
+            SET name=?, img=?, price=?, weight=?, comment=?
+            WHERE id IN (
+                SELECT Dishes.id
+                FROM Dishes
+                JOIN Categories ON Dishes.category_id = Categories.id
+                JOIN Restaurant ON Categories.restaurant_id = Restaurant.id
+                WHERE Restaurant.restaurant = ? AND Dishes.url = ?
+            )
+        '''
+
+        # category_update_query = '''
+        #             UPDATE Categories
+        #             SET category=?
+        #             WHERE id IN (
+        #                 SELECT Categories.id
+        #                 FROM Categories
+        #                 JOIN Restaurant ON Categories.restaurant_id = Restaurant.id
+        #                 WHERE Restaurant.restaurant = ? AND Categories.category = ?
+        #             )
+        #         '''
+        # self._db.execute(category_update_query, category, restaurant, category)
+        #
+        # ingredient_update_query = '''
+        #     UPDATE Ingredients
+        #     SET ingredient=?'''
+        #
+        # self._db.execute(ingredient_update_query, ingredient, dishes_url)
+
+        self._db.execute(dishes_update_query, name, img, price, weight, comment, restaurant, dishes_url)
+
 
