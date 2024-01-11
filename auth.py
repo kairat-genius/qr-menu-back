@@ -5,7 +5,6 @@ import hashlib
 _sqlite = SQL('sqlite:///db.sqlite3')
 _sqlite._autocommit = True
 
-
 class Authefication:
 
     # init database
@@ -19,21 +18,19 @@ class Authefication:
                     hashf VARCHAR UNIQUE,
                     restaurant VARCHAR NOT NULL,
                     address VARCHAR,
-                    dishes_id INTEGER,
                     start_day VARCHAR,
                     end_day VARCHAR,
                     start_time TIME,
                     end_time TIME,
-                    logo BLOB,
-                    FOREIGN KEY (dishes_id) REFERENCES Dishes(id) ON DELETE CASCADE)""")
+                    logo BLOB)""")
 
-    def _insert_restik(self, hashf, rest, address=None, dishes_id=None, start_day=None, end_day=None, start_time=None,
+    def _insert_restik(self, hashf, rest, address=None, start_day=None, end_day=None, start_time=None,
                        end_time=None, logo=None) -> bool:
         """ INSERT DATA TO Restaurant table """
         try:
             self._db.execute(
-                """INSERT INTO Restaurant(hashf, restaurant, address, dishes_id, start_day, end_day, start_time, end_time, logo) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                hashf, rest, address, dishes_id, start_day, end_day, start_time, end_time, logo)
+                """INSERT INTO Restaurant(hashf, restaurant, address, start_day, end_day, start_time, end_time, logo) VALUES(?, ?, ?, ?, ?, ?, ?, ?)""",
+                hashf, rest, address, start_day, end_day, start_time, end_time, logo)
 
         except:
             return False
@@ -45,7 +42,9 @@ class Authefication:
         self._db.execute(r"""CREATE TABLE IF NOT EXISTS Categories (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     category VARCHAR NOT NULL,
-                    url VARCHAR)""")
+                    url VARCHAR,
+                    restaurant_id INTEGER,
+                    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(id) ON DELETE CASCADE)""")
 
     def _create_dishes_table(self) -> None:
         """ Create Dishes table if not exists """
@@ -54,12 +53,10 @@ class Authefication:
                     img BLOB,
                     name VARCHAR NOT NULL,
                     url VARCHAR,
-                    ingredient_id INTEGER,
                     price INTEGER,
                     weight INTEGER,
                     comment VARCHAR,
                     category_id INTEGER,
-                    FOREIGN KEY (ingredient_id) REFERENCES Ingredients(id),
                     FOREIGN KEY (category_id) REFERENCES Categories(id) ON DELETE CASCADE)""")
 
     def _create_ingredients_table(self) -> None:
@@ -67,6 +64,15 @@ class Authefication:
         self._db.execute(r"""CREATE TABLE IF NOT EXISTS Ingredients (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     ingredient VARCHAR)""")
+
+    def _create_dish_ingredient_table(self) -> None:
+        """ Связь многие ко многим таблицы блюд и ингредиентов """
+        self._db.execute(r"""CREATE TABLE IF NOT EXISTS DishIngredient (
+                       dish_id INTEGER,
+                       ingredient_id INTEGER,
+                       PRIMARY KEY (dish_id, ingredient_id),
+                       FOREIGN KEY (dish_id) REFERENCES Dishes(id) ON DELETE CASCADE,
+                       FOREIGN KEY (ingredient_id) REFERENCES Ingredients(id) ON DELETE CASCADE)""")
 
     def _create_tables(self) -> None:
         """ Create Tables (столы) if not exists """
@@ -86,6 +92,7 @@ class Authefication:
                     email VARCHAR NOT NULL,
                     password TEXT NOT NULL,
                     FOREIGN KEY (hashf) REFERENCES Restaurant(hashf) ON DELETE CASCADE)""")
+
 
     def _insert_auth(self, hashf, **kwrags) -> bool:
         """ Insert in authentication table """
@@ -207,3 +214,4 @@ auth_instance._create_categories_table()
 auth_instance._create_auth_table()
 auth_instance._create_tables()
 auth_instance._create_ingredients_table()
+auth_instance._create_dish_ingredient_table()

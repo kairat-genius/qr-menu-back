@@ -14,28 +14,38 @@
 <form id="editMenuForm">
 
     <h2>Existing Menu</h2>
-    <ul id="existingMenu">
-        <li>
-            <label for="name">Dish Name:</label>
-            <input type="text" id="name" name="name" value="{{ menu.name }}" required>
 
-            <label for="img">img (Image):</label>
-            <input type="file" id="img" name="img" accept="image/*">
+    <label for="name">Dish Name:</label>
+    <input type="text" id="name" name="name" value="{{ menu.name }}" required>
+
+    <label for="img">img (Image):</label>
+    <input type="file" id="img" name="img" accept="image/*">
+
+    <img id="ImgImage" src="{{ menu.img }}" alt="dishes img">
+
+    <label for="weight">Dish Weight:</label>
+    <input type="text" id="weight" name="weight" value="{{ menu.weight }}" required>
+
+    <label for="price">Dish Price:</label>
+    <input type="text" id="price" name="price" value="{{ menu.price }}" required>
+
+    <label for="comment">Dish Comment:</label>
+    <input type="text" id="comment" name="comment" value="{{ menu.comment }}" required>
+
+    <select id="category" name="category">
+        <option value="{{ menu.category }}">{{ menu.category }}</option>
+        {% for category in category_list %}
+        <option value="{{ category.category }}" {% if category.category== menu.category %}selected{% endif %}>{{
+            category.category }}
+        </option>
+        {% endfor %}
+    </select>
 
 
-            <img id="ImgImage" src="{{ menu.img }}" alt="dishes img">
-
-            <label for="weight">Dish Weight:</label>
-            <input type="text" id="weight" name="weight" value="{{ menu.weight }}" required>
-
-            <label for="price">Dish Price:</label>
-            <input type="text" id="price" name="price" value="{{ menu.price }}" required>
-
-            <label for="comment">Dish Comment:</label>
-            <input type="text" id="comment" name="comment" value="{{ menu.comment }}" required>
-        </li>
+    <label>Dish Ingredients:</label>
+    <ul>
+        {{ menu.ingredients }}
     </ul>
-
 
 
     <button type="button" onclick="submitForm()">Save Changes</button>
@@ -50,6 +60,8 @@
             weight: document.getElementById('weight').value,
             price: document.getElementById('price').value,
             comment: document.getElementById('comment').value,
+            category: document.getElementById('category').value,
+
             img: '{{ menu.img }}'
         };
 

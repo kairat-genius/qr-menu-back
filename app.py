@@ -10,15 +10,11 @@ auth = Authefication()
 
 @app.route('/api/authentication', methods=['POST'])
 def authentication():
-
     try:
         match request.method:
-
             case 'POST':
                 data = json.loads(request.data.decode())
-
                 create = auth.auth(**data)
-
                 match create:
                     case 'insert_restik':
                         return app.response_class(response=json.dumps({
@@ -245,7 +241,9 @@ def menu(restaurant):
 def menu_add(restaurant, dishes_url):
     if request.method == 'GET':
         menu_old = base.get_menu_data(restaurant, dishes_url)
-        return render_template('testss.html', dishes_url=dishes_url, restaurant=restaurant, menu=menu_old)
+        category_list = base.get_category_data(restaurant)
+        # return jsonify({'menu': menu_old, 'category_list': category_list})
+        return render_template('testss.html', dishes_url=dishes_url, restaurant=restaurant, menu=menu_old, category_list=category_list)
 
     elif request.method == 'POST':
         try:
@@ -256,7 +254,7 @@ def menu_add(restaurant, dishes_url):
             if 'img' in data:
                 img = data.pop('img')
 
-
+            print(data)
             # отправка на сохранения данных
             base.update_menu_data(
                 data.get('name'),
@@ -265,7 +263,6 @@ def menu_add(restaurant, dishes_url):
                 data.get('weight'),
                 data.get('comment'),
                 data.get('category'),
-                data.get('ingredient'),
                 restaurant,
                 dishes_url,
             )

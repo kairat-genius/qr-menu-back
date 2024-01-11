@@ -10,7 +10,6 @@ class Data:
         self._db = SQL('sqlite:///db.sqlite3')
         self._db._autocommit = True
 
-
     """Код админ панели"""
 
     """Взятие название ресторана"""
@@ -57,29 +56,47 @@ class Data:
     def get_menu_data(self, restaurant_name, dishes_url=None):
         try:
             if dishes_url:
-                # Используем фильтрацию по имени блюда, если dishes_name передан
+                # Используем фильтрацию по имени блюда, если dishes_url передан
                 query = '''
-                    SELECT Dishes.name, Dishes.img, Dishes.weight, Dishes.price, Dishes.comment, Categories.category, Ingredients.ingredient
+                    SELECT Dishes.id, Dishes.name, Dishes.img, Dishes.weight, Dishes.price, Dishes.comment, Categories.category, GROUP_CONCAT(Ingredients.ingredient) AS ingredients
                     FROM Dishes
-                    JOIN Ingredients ON Dishes.ingredient_id = Ingredients.id
+                    LEFT JOIN DishIngredient ON Dishes.id = DishIngredient.dish_id
+                    LEFT JOIN Ingredients ON DishIngredient.ingredient_id = Ingredients.id
                     JOIN Categories ON Dishes.category_id = Categories.id
                     JOIN Restaurant ON Categories.restaurant_id = Restaurant.id
                     WHERE Restaurant.restaurant = ? AND Dishes.url = ?
+                    GROUP BY Dishes.id;
                 '''
                 menu_data = self._db.execute(query, restaurant_name, dishes_url)
                 return menu_data[0] if menu_data else None
             else:
                 # В противном случае, получаем все блюда
                 query = '''
-                    SELECT Dishes.name, Dishes.img, Dishes.weight, Dishes.price, Dishes.comment, Categories.category, Ingredients.ingredient
+                    SELECT Dishes.id, Dishes.name, Dishes.img, Dishes.weight, Dishes.price, Dishes.comment, Categories.category, GROUP_CONCAT(Ingredients.ingredient) AS ingredients
                     FROM Dishes
-                    JOIN Ingredients ON Dishes.ingredient_id = Ingredients.id
+                    LEFT JOIN DishIngredient ON Dishes.id = DishIngredient.dish_id
+                    LEFT JOIN Ingredients ON DishIngredient.ingredient_id = Ingredients.id
                     JOIN Categories ON Dishes.category_id = Categories.id
                     JOIN Restaurant ON Categories.restaurant_id = Restaurant.id
                     WHERE Restaurant.restaurant = ?
+                    GROUP BY Dishes.id;
                 '''
                 menu_data = self._db.execute(query, restaurant_name)
                 return menu_data if menu_data else None
+        except Exception as e:
+            raise e
+
+    """Взятие категорий"""
+    def get_category_data(self, restaurant_name):
+        try:
+            query = '''
+                SELECT Categories.category
+                FROM Categories
+                JOIN Restaurant ON Categories.restaurant_id = Restaurant.id
+                WHERE Restaurant.restaurant = ?
+            '''
+            category_data = self._db.execute(query, restaurant_name)
+            return category_data if category_data else None
         except Exception as e:
             raise e
 
@@ -157,37 +174,26 @@ class Data:
     """Изменения, сохранения данных в базе данных add a new tables"""
     # def update_table_data(self):
 
-    def update_menu_data(self, name, img, price, weight, comment, category, ingredient, restaurant, dishes_url):
+    def update_menu_data(self, name, img, price, weight, comment, category, restaurant, dishes_url):
+
+        url = dishes_url
         dishes_update_query = '''
-            UPDATE Dishes
-            SET name=?, img=?, price=?, weight=?, comment=?
-            WHERE id IN (
-                SELECT Dishes.id
-                FROM Dishes
-                JOIN Categories ON Dishes.category_id = Categories.id
-                JOIN Restaurant ON Categories.restaurant_id = Restaurant.id
-                WHERE Restaurant.restaurant = ? AND Dishes.url = ?
-            )
-        '''
+                UPDATE Dishes
+                SET name=?, img=?, price=?, weight=?, comment=?, category_id=(
+                    SELECT id FROM Categories
+                    WHERE (category = ? OR category IS NULL) AND restaurant_id = (
+                        SELECT id FROM Restaurant
+                        WHERE restaurant = ?
+                    )
+                )
+                WHERE url = ? AND category_id IN (
+                    SELECT id FROM Categories
+                    WHERE restaurant_id = (
+                        SELECT id FROM Restaurant
+                        WHERE restaurant = ?
+                    )
+                )
+            '''
 
-        # category_update_query = '''
-        #             UPDATE Categories
-        #             SET category=?
-        #             WHERE id IN (
-        #                 SELECT Categories.id
-        #                 FROM Categories
-        #                 JOIN Restaurant ON Categories.restaurant_id = Restaurant.id
-        #                 WHERE Restaurant.restaurant = ? AND Categories.category = ?
-        #             )
-        #         '''
-        # self._db.execute(category_update_query, category, restaurant, category)
-        #
-        # ingredient_update_query = '''
-        #     UPDATE Ingredients
-        #     SET ingredient=?'''
-        #
-        # self._db.execute(ingredient_update_query, ingredient, dishes_url)
-
-        self._db.execute(dishes_update_query, name, img, price, weight, comment, restaurant, dishes_url)
-
+        self._db.execute(dishes_update_query, name, img, price, weight, comment, category, restaurant, url, restaurant)
 
