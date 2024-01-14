@@ -242,8 +242,10 @@ def menu_add(restaurant, dishes_url):
     if request.method == 'GET':
         menu_old = base.get_menu_data(restaurant, dishes_url)
         category_list = base.get_category_data(restaurant)
-        # return jsonify({'menu': menu_old, 'category_list': category_list})
-        return render_template('testss.html', dishes_url=dishes_url, restaurant=restaurant, menu=menu_old, category_list=category_list)
+        ingredient_list = base.get_ingredients_list(restaurant)
+
+        # return jsonify({'menu': menu_old, 'category_list': category_list, ingredient_list=ingredient_list})
+        return render_template('testss.html', dishes_url=dishes_url, restaurant=restaurant, menu=menu_old, category_list=category_list, ingredient_list=ingredient_list)
 
     elif request.method == 'POST':
         try:
@@ -263,6 +265,7 @@ def menu_add(restaurant, dishes_url):
                 data.get('weight'),
                 data.get('comment'),
                 data.get('category'),
+                data.get('ingredients'),
                 restaurant,
                 dishes_url,
             )
@@ -272,6 +275,9 @@ def menu_add(restaurant, dishes_url):
         except Exception as e:
             logging.error(f"Error: {str(e)}")
             return jsonify({'message': f'Error: {str(e)}'}), 500
+
+
+
 
 
 

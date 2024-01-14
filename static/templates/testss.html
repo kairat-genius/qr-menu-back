@@ -42,10 +42,20 @@
     </select>
 
 
-    <label>Dish Ingredients:</label>
-    <ul>
-        {{ menu.ingredients }}
-    </ul>
+    <label for="ingredients">Ингредиенты блюда:</label>
+    <select id="ingredients" name="ingredients" multiple>
+        {% for ingredient in ingredient_list %}
+        <option value="{{ ingredient }}">{{ ingredient }}</option>
+
+        {% endfor %}
+    </select>
+
+    <label>Ингредиенты блюда:</label>
+    <select multiple>
+        {% for ingredient in menu.ingredients %}
+        <option value="{{ ingredient }}">{{ ingredient }}</option>
+        {% endfor %}
+    </select>
 
 
     <button type="button" onclick="submitForm()">Save Changes</button>
@@ -61,6 +71,7 @@
             price: document.getElementById('price').value,
             comment: document.getElementById('comment').value,
             category: document.getElementById('category').value,
+            ingredients: Array.from(document.getElementById('ingredients').selectedOptions).map(option => option.value),
 
             img: '{{ menu.img }}'
         };

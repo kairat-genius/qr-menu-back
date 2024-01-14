@@ -63,7 +63,9 @@ class Authefication:
         """ Create Ingredients table if not exists """
         self._db.execute(r"""CREATE TABLE IF NOT EXISTS Ingredients (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    ingredient VARCHAR)""")
+                    ingredient VARCHAR,
+                    restaurant_id INTEGER,
+                    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(id) ON DELETE CASCADE)""")
 
     def _create_dish_ingredient_table(self) -> None:
         """ Связь многие ко многим таблицы блюд и ингредиентов """

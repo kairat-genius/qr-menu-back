@@ -13,7 +13,6 @@ class Data:
     """Код админ панели"""
 
     """Взятие название ресторана"""
-
     def get_restaurant_data(self, restaurant_name):
         try:
             restaurant_data = self._db.execute('SELECT * FROM Restaurant WHERE restaurant = ?', restaurant_name)
@@ -22,7 +21,6 @@ class Data:
             raise e
 
     """Взятие паролей из базы данных"""
-
     def get_user_data_password(self, restaurant_name):
         try:
             query = '''
@@ -36,8 +34,7 @@ class Data:
         except Exception as e:
             raise e
 
-    """Взятие данных из базы данных"""
-
+    """Взятие данных для settings из базы данных"""
     def get_user_data(self, restaurant_name):
         try:
             query = '''
@@ -58,7 +55,7 @@ class Data:
             if dishes_url:
                 # Используем фильтрацию по имени блюда, если dishes_url передан
                 query = '''
-                    SELECT Dishes.id, Dishes.name, Dishes.img, Dishes.weight, Dishes.price, Dishes.comment, Categories.category, GROUP_CONCAT(Ingredients.ingredient) AS ingredients
+                    SELECT Dishes.id, Dishes.name, Dishes.img, Dishes.weight, Dishes.price, Dishes.comment, Categories.category, GROUP_CONCAT(Ingredients.ingredient) AS ingredients_str
                     FROM Dishes
                     LEFT JOIN DishIngredient ON Dishes.id = DishIngredient.dish_id
                     LEFT JOIN Ingredients ON DishIngredient.ingredient_id = Ingredients.id
@@ -68,11 +65,17 @@ class Data:
                     GROUP BY Dishes.id;
                 '''
                 menu_data = self._db.execute(query, restaurant_name, dishes_url)
+
+                # Преобразование строки с ингредиентами в список
+                if menu_data and menu_data[0]['ingredients_str']:
+                    menu_data[0]['ingredients'] = menu_data[0]['ingredients_str'].split(',')
+                    del menu_data[0]['ingredients_str']
+
                 return menu_data[0] if menu_data else None
             else:
                 # В противном случае, получаем все блюда
                 query = '''
-                    SELECT Dishes.id, Dishes.name, Dishes.img, Dishes.weight, Dishes.price, Dishes.comment, Categories.category, GROUP_CONCAT(Ingredients.ingredient) AS ingredients
+                    SELECT Dishes.id, Dishes.name, Dishes.img, Dishes.weight, Dishes.price, Dishes.comment, Categories.category, GROUP_CONCAT(Ingredients.ingredient) AS ingredients_str
                     FROM Dishes
                     LEFT JOIN DishIngredient ON Dishes.id = DishIngredient.dish_id
                     LEFT JOIN Ingredients ON DishIngredient.ingredient_id = Ingredients.id
@@ -81,7 +84,18 @@ class Data:
                     WHERE Restaurant.restaurant = ?
                     GROUP BY Dishes.id;
                 '''
+
                 menu_data = self._db.execute(query, restaurant_name)
+
+                # Преобразование строки с ингредиентами в список для каждого блюда
+                if menu_data:
+                    for dish in menu_data:
+                        if dish['ingredients_str']:
+                            dish['ingredients'] = dish['ingredients_str'].split(',')
+                            del dish['ingredients_str']
+                        else:
+                            dish['ingredients'] = []
+
                 return menu_data if menu_data else None
         except Exception as e:
             raise e
@@ -100,6 +114,21 @@ class Data:
         except Exception as e:
             raise e
 
+    """Получение всех ингредиентов ресторана"""
+    def get_ingredients_list(self, restaurant_name):
+        try:
+            query = '''
+                SELECT DISTINCT Ingredients.ingredient
+                FROM Ingredients
+                WHERE Ingredients.restaurant_id = (
+                    SELECT id FROM Restaurant WHERE restaurant = ?
+                );
+            '''
+            ingredients_list = self._db.execute(query, restaurant_name)
+            return [ingredient['ingredient'] for ingredient in ingredients_list] if ingredients_list else []
+        except Exception as e:
+            print(f"Error in get_ingredients_list: {str(e)}")
+            return []
 
 
     """Взятие данных из таблицы базы данных Tables(столы) """
@@ -174,10 +203,13 @@ class Data:
     """Изменения, сохранения данных в базе данных add a new tables"""
     # def update_table_data(self):
 
-    def update_menu_data(self, name, img, price, weight, comment, category, restaurant, dishes_url):
+    """Изменения Блюда"""
+    def update_menu_data(self, name, img, price, weight, comment, category, ingredients, restaurant, dishes_url):
+        try:
+            url = dishes_url
 
-        url = dishes_url
-        dishes_update_query = '''
+            # Обновление основных данных о блюде
+            dishes_update_query = '''
                 UPDATE Dishes
                 SET name=?, img=?, price=?, weight=?, comment=?, category_id=(
                     SELECT id FROM Categories
@@ -194,6 +226,38 @@ class Data:
                     )
                 )
             '''
+            self._db.execute(dishes_update_query, name, img, price, weight, comment, category, restaurant, url,
+                             restaurant)
 
-        self._db.execute(dishes_update_query, name, img, price, weight, comment, category, restaurant, url, restaurant)
+            # Обновление ингредиентов блюда
+            dish_id_query = '''
+                SELECT id FROM Dishes
+                WHERE url = ? AND category_id IN (
+                    SELECT id FROM Categories
+                    WHERE restaurant_id = (
+                        SELECT id FROM Restaurant
+                        WHERE restaurant = ?
+                    )
+                )
+            '''
+            dish_id = self._db.execute(dish_id_query, url, restaurant)
+
+            if dish_id and ingredients:
+                dish_id = dish_id[0]['id']
+
+                placeholders = ', '.join(
+                    ['(?, (SELECT id FROM Ingredients WHERE ingredient = ?))' for _ in ingredients])
+
+                ingredient_update_query = f'''
+                    INSERT OR REPLACE INTO DishIngredient (dish_id, ingredient_id)
+                    VALUES {placeholders}
+                '''
+
+                params_list = [item for sublist in [(dish_id, ingredient) for ingredient in ingredients] for item in
+                               sublist]
+
+                self._db.execute(ingredient_update_query, *params_list)
+
+        except Exception as e:
+            raise e
 
