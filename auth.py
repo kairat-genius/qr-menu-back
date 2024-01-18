@@ -43,6 +43,7 @@ class Authefication:
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     category VARCHAR NOT NULL,
                     url VARCHAR,
+                    color VARCHAR,
                     restaurant_id INTEGER,
                     FOREIGN KEY (restaurant_id) REFERENCES Restaurant(id) ON DELETE CASCADE)""")
 

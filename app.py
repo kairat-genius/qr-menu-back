@@ -165,8 +165,6 @@ def settings(restaurant):
             if 'logo' in data:
                 logo = data.pop('logo')
 
-
-
             # отправка на сохранения данных
             base.update_user_data(
                 restaurant,
@@ -236,15 +234,16 @@ def menu(restaurant):
             logging.error(f"Error: {str(e)}")
             return jsonify({'message': f'Error: {str(e)}'}), 500
 
-
-@app.route('/admin_panel/<restaurant>/menu_add/<dishes_url>', methods=['GET', 'POST'])
-def menu_add(restaurant, dishes_url):
+"""Редактирования блюда и добавления нового блюда"""
+@app.route('/admin_panel/<restaurant>/menu_add/', defaults={'dishes_url': None}, methods=['GET', 'POST'])
+@app.route('/admin_panel/<restaurant>/menu_edit/<dishes_url>', methods=['GET', 'POST'])
+def menu_edit(restaurant, dishes_url):
     if request.method == 'GET':
         menu_old = base.get_menu_data(restaurant, dishes_url)
         category_list = base.get_category_data(restaurant)
         ingredient_list = base.get_ingredients_list(restaurant)
 
-        # return jsonify({'menu': menu_old, 'category_list': category_list, ingredient_list=ingredient_list})
+        # return jsonify({'menu': menu_old, 'category_list': category_list, 'ingredient_list':ingredient_list})
         return render_template('testss.html', dishes_url=dishes_url, restaurant=restaurant, menu=menu_old, category_list=category_list, ingredient_list=ingredient_list)
 
     elif request.method == 'POST':
@@ -258,17 +257,31 @@ def menu_add(restaurant, dishes_url):
 
             print(data)
             # отправка на сохранения данных
-            base.update_menu_data(
-                data.get('name'),
-                img,
-                data.get('price'),
-                data.get('weight'),
-                data.get('comment'),
-                data.get('category'),
-                data.get('ingredients'),
-                restaurant,
-                dishes_url,
-            )
+            if dishes_url and dishes_url.lower() != 'none':
+                base.update_menu_data(
+                    data.get('name'),
+                    img,
+                    data.get('price'),
+                    data.get('weight'),
+                    data.get('comment'),
+                    data.get('category'),
+                    data.get('ingredients'),
+                    restaurant,
+                    dishes_url,
+                )
+            # отправка на добавления данных
+            else:
+                base.update_menu_data(
+                    data.get('name'),
+                    img,
+                    data.get('price'),
+                    data.get('weight'),
+                    data.get('comment'),
+                    data.get('category'),
+                    data.get('ingredients'),
+                    restaurant,
+                )
+
 
             # Возврат данных в формате JSON
             return jsonify({'message': 'Changes saved successfully'})
@@ -277,7 +290,40 @@ def menu_add(restaurant, dishes_url):
             return jsonify({'message': f'Error: {str(e)}'}), 500
 
 
+@app.route('/admin_panel/<restaurant>/category/', defaults={'category_url': None}, methods=['GET', 'POST'])
+@app.route('/admin_panel/<restaurant>/category/<category_url>', methods=['GET', 'POST'])
+def category(restaurant, category_url):
+    if request.method == 'GET':
+        category_list = base.get_category_data(restaurant)
+        old_category = base.get_category_data_url(restaurant, category_url)
+        return render_template('category.html', category_url=category_url, restaurant=restaurant,
+                               category_list=category_list, old_category=old_category)
 
+    elif request.method == 'POST':
+        try:
+
+            data = request.get_json()
+
+            # Проверяем наличие category_url
+            if category_url and category_url.lower() != 'none':
+                base.update_category_data(
+                    data.get('category'),
+                    data.get('color'),
+                    restaurant,
+                    category_url,
+                )
+            else:
+                # Если category_url отсутствует, добавляем новую категорию
+                base.update_category_data(
+                    data.get('category'),
+                    data.get('color'),
+                    restaurant,
+                )
+
+            return jsonify({'message': 'Changes saved successfully'})
+        except Exception as e:
+            logging.error(f"Error: {str(e)}")
+            return jsonify({'message': f'Error: {str(e)}'}), 500
 
 
 

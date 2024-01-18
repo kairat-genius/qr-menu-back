@@ -13,6 +13,7 @@ class Data:
     """Код админ панели"""
 
     """Взятие название ресторана"""
+
     def get_restaurant_data(self, restaurant_name):
         try:
             restaurant_data = self._db.execute('SELECT * FROM Restaurant WHERE restaurant = ?', restaurant_name)
@@ -21,6 +22,7 @@ class Data:
             raise e
 
     """Взятие паролей из базы данных"""
+
     def get_user_data_password(self, restaurant_name):
         try:
             query = '''
@@ -35,6 +37,7 @@ class Data:
             raise e
 
     """Взятие данных для settings из базы данных"""
+
     def get_user_data(self, restaurant_name):
         try:
             query = '''
@@ -55,7 +58,7 @@ class Data:
             if dishes_url:
                 # Используем фильтрацию по имени блюда, если dishes_url передан
                 query = '''
-                    SELECT Dishes.id, Dishes.name, Dishes.img, Dishes.weight, Dishes.price, Dishes.comment, Categories.category, GROUP_CONCAT(Ingredients.ingredient) AS ingredients_str
+                    SELECT Dishes.id, Dishes.name, Dishes.img, Dishes.weight, Dishes.price, Dishes.comment, Categories.category, Categories.color, GROUP_CONCAT(Ingredients.ingredient) AS ingredients_str
                     FROM Dishes
                     LEFT JOIN DishIngredient ON Dishes.id = DishIngredient.dish_id
                     LEFT JOIN Ingredients ON DishIngredient.ingredient_id = Ingredients.id
@@ -101,10 +104,11 @@ class Data:
             raise e
 
     """Взятие категорий"""
+
     def get_category_data(self, restaurant_name):
         try:
             query = '''
-                SELECT Categories.category
+                SELECT Categories.category, Categories.color
                 FROM Categories
                 JOIN Restaurant ON Categories.restaurant_id = Restaurant.id
                 WHERE Restaurant.restaurant = ?
@@ -114,7 +118,23 @@ class Data:
         except Exception as e:
             raise e
 
+    """Взятие старых категорий для изменения по url"""
+
+    def get_category_data_url(self, restaurant_name, category_url):
+        try:
+            query = '''
+                SELECT Categories.category, Categories.color
+                FROM Categories
+                JOIN Restaurant ON Categories.restaurant_id = Restaurant.id
+                WHERE Restaurant.restaurant = ? AND Categories.url = ?
+            '''
+            category_data = self._db.execute(query, restaurant_name, category_url)
+            return category_data[0] if category_data else None
+        except Exception as e:
+            raise e
+
     """Получение всех ингредиентов ресторана"""
+
     def get_ingredients_list(self, restaurant_name):
         try:
             query = '''
@@ -130,8 +150,8 @@ class Data:
             print(f"Error in get_ingredients_list: {str(e)}")
             return []
 
-
     """Взятие данных из таблицы базы данных Tables(столы) """
+
     def get_table_data(self, restaurant_name):
         try:
             query = '''
@@ -171,8 +191,6 @@ class Data:
             print(f"Error in delete_table: {str(e)}")
             return False
 
-
-
     """Изменения, сохранения данных в базе данных Settings"""
     def update_user_data(self, restaurant, email, password, address, new_restaurant, start_day, end_day, start_time,
                          end_time, logo):
@@ -203,48 +221,73 @@ class Data:
     """Изменения, сохранения данных в базе данных add a new tables"""
     # def update_table_data(self):
 
-    """Изменения Блюда"""
-    def update_menu_data(self, name, img, price, weight, comment, category, ingredients, restaurant, dishes_url):
+    """Изменения, добавления Блюда"""
+    def update_menu_data(self, name, img, price, weight, comment, category, ingredients, restaurant, dishes_url=None):
         try:
-            url = dishes_url
+            # Если есть dishes_url, выполняем обновление данных о блюде
+            if dishes_url:
+                url = dishes_url
+                dishes_update_query = '''
+                    UPDATE Dishes
+                    SET name=?, img=?, price=?, weight=?, comment=?, category_id=(
+                        SELECT id FROM Categories
+                        WHERE (category = ? OR category IS NULL) AND restaurant_id = (
+                            SELECT id FROM Restaurant
+                            WHERE restaurant = ?
+                        )
+                    )
+                    WHERE url = ? AND category_id IN (
+                        SELECT id FROM Categories
+                        WHERE restaurant_id = (
+                            SELECT id FROM Restaurant
+                            WHERE restaurant = ?
+                        )
+                    )
+                '''
+                self._db.execute(dishes_update_query, name, img, price, weight, comment, category, restaurant, url,
+                                 restaurant)
 
-            # Обновление основных данных о блюде
-            dishes_update_query = '''
-                UPDATE Dishes
-                SET name=?, img=?, price=?, weight=?, comment=?, category_id=(
-                    SELECT id FROM Categories
-                    WHERE (category = ? OR category IS NULL) AND restaurant_id = (
-                        SELECT id FROM Restaurant
-                        WHERE restaurant = ?
+                # Получаем id обновленного блюда
+                dish_id_query = '''
+                    SELECT id FROM Dishes
+                    WHERE url = ? AND category_id IN (
+                        SELECT id FROM Categories
+                        WHERE restaurant_id = (
+                            SELECT id FROM Restaurant
+                            WHERE restaurant = ?
+                        )
                     )
-                )
-                WHERE url = ? AND category_id IN (
-                    SELECT id FROM Categories
-                    WHERE restaurant_id = (
-                        SELECT id FROM Restaurant
-                        WHERE restaurant = ?
-                    )
-                )
-            '''
-            self._db.execute(dishes_update_query, name, img, price, weight, comment, category, restaurant, url,
-                             restaurant)
+                '''
+                dish_id = self._db.execute(dish_id_query, url, restaurant)
+            else:
+                # Если dishes_url отсутствует, добавляем новое блюдо
+                dishes_insert_query = '''
+                    INSERT INTO Dishes (name, img, price, weight, comment, category_id)
+                    VALUES (?, ?, ?, ?, ?, (
+                        SELECT id FROM Categories
+                        WHERE (category = ? OR category IS NULL) AND restaurant_id = (
+                            SELECT id FROM Restaurant
+                            WHERE restaurant = ?
+                        )
+                    ));
+                '''
+                self._db.execute(dishes_insert_query, name, img, price, weight, comment, category, restaurant)
 
-            # Обновление ингредиентов блюда
-            dish_id_query = '''
-                SELECT id FROM Dishes
-                WHERE url = ? AND category_id IN (
-                    SELECT id FROM Categories
-                    WHERE restaurant_id = (
-                        SELECT id FROM Restaurant
-                        WHERE restaurant = ?
-                    )
-                )
-            '''
-            dish_id = self._db.execute(dish_id_query, url, restaurant)
+                # Получаем id только что добавленного блюда
+                dish_id_query = 'SELECT last_insert_rowid() as id;'
+                dish_id = self._db.execute(dish_id_query)
 
             if dish_id and ingredients:
                 dish_id = dish_id[0]['id']
 
+                # Удаляем старые ингредиенты блюда
+                delete_old_ingredients_query = '''
+                    DELETE FROM DishIngredient
+                    WHERE dish_id = ?
+                '''
+                self._db.execute(delete_old_ingredients_query, dish_id)
+
+                # Подготавливаем строку для IN-запроса по ингредиентам
                 placeholders = ', '.join(
                     ['(?, (SELECT id FROM Ingredients WHERE ingredient = ?))' for _ in ingredients])
 
@@ -253,11 +296,35 @@ class Data:
                     VALUES {placeholders}
                 '''
 
+                # Создаем список параметров для execute
                 params_list = [item for sublist in [(dish_id, ingredient) for ingredient in ingredients] for item in
                                sublist]
 
+                # Выполняем запрос
                 self._db.execute(ingredient_update_query, *params_list)
 
         except Exception as e:
             raise e
 
+    def update_category_data(self, category, color, restaurant, category_url=None):
+        try:
+            # Обновление данных о категории по URL, если указан
+            if category_url:
+                category_update_query = '''
+                    UPDATE Categories
+                    SET category = ?, color = ?
+                    WHERE restaurant_id = (
+                        SELECT id FROM Restaurant
+                        WHERE restaurant = ?
+                    ) AND url = ?;
+                '''
+                self._db.execute(category_update_query, category, color, restaurant, category_url)
+            else:
+                # Добавление новой категории, если не указан URL
+                category_insert_query = '''
+                    INSERT INTO Categories (category, color, restaurant_id)
+                    VALUES (?, ?, (SELECT id FROM Restaurant WHERE restaurant = ?));
+                '''
+                self._db.execute(category_insert_query, category, color, restaurant)
+        except Exception as e:
+            raise e

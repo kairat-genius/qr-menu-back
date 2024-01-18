@@ -32,10 +32,10 @@
     <label for="comment">Dish Comment:</label>
     <input type="text" id="comment" name="comment" value="{{ menu.comment }}" required>
 
-    <select id="category" name="category">
-        <option value="{{ menu.category }}">{{ menu.category }}</option>
+    <select id="category" name="category" style="color: {{ menu.color }};">
+        <option value="{{ menu.category }}" style="color: {{ menu.color }};">{{ menu.category }}</option>
         {% for category in category_list %}
-        <option value="{{ category.category }}" {% if category.category== menu.category %}selected{% endif %}>{{
+        <option value="{{ category.category }}" style="color: {{ category.color }};">{{
             category.category }}
         </option>
         {% endfor %}
@@ -90,7 +90,7 @@
     }
 
     function sendFormData(formData) {
-        fetch('/admin_panel/{{ restaurant }}/menu_add/{{ dishes_url }}', {
+        fetch('/admin_panel/{{ restaurant }}/menu_edit/{{ dishes_url }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
