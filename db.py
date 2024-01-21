@@ -13,7 +13,6 @@ class Data:
     """Код админ панели"""
 
     """Взятие название ресторана"""
-
     def get_restaurant_data(self, restaurant_name):
         try:
             restaurant_data = self._db.execute('SELECT * FROM Restaurant WHERE restaurant = ?', restaurant_name)
@@ -219,18 +218,27 @@ class Data:
         self._db.execute(auth_update_query, email, hashed_password, restaurant)
 
     """Изменения, сохранения данных в базе данных add a new tables"""
-    def add_tables_data(self, menu_link, qr_code, restaurant):
 
+    def add_tables_data(self, menu_links, qr_codes, restaurant):
+        try:
 
-        table_add_query = '''
-            INSERT INTO Tables (menu_link, qr_code, restaurant_id)
-            VALUES (?, ?, (
-                        SELECT id FROM Restaurant
-                        WHERE restaurant = ?
-                        )
-                    );
-        '''
-        self._db.execute(table_add_query, menu_link, qr_code, restaurant)
+            for i in range(len(menu_links)):
+                menu_link = menu_links[i]
+                qr_code = qr_codes[i]
+
+                table_add_query = '''
+                    INSERT INTO Tables (menu_link, qr_code, restaurant_id)
+                    VALUES (?, ?, (
+                                SELECT id FROM Restaurant
+                                WHERE restaurant = ?
+                                )
+                            );
+                '''
+                self._db.execute(table_add_query, menu_link, qr_code, restaurant)
+
+            return {'message': 'Changes saved successfully'}
+        except Exception as e:
+            raise e
 
     """Изменения, добавления Блюда"""
     def update_menu_data(self, name, img, price, weight, comment, category, ingredients, restaurant, dishes_url=None):
