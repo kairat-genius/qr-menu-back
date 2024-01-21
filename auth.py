@@ -80,7 +80,7 @@ class Authefication:
     def _create_tables(self) -> None:
         """ Create Tables (столы) if not exists """
         self._db.execute(r"""CREATE TABLE IF NOT EXISTS Tables (
-                    id INTEGER PRIMARY KEY,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                     menu_link VARCHAR,
                     qr_code VARCHAR,
                     restaurant_id INTEGER,

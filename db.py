@@ -219,7 +219,18 @@ class Data:
         self._db.execute(auth_update_query, email, hashed_password, restaurant)
 
     """Изменения, сохранения данных в базе данных add a new tables"""
-    # def update_table_data(self):
+    def add_tables_data(self, menu_link, qr_code, restaurant):
+
+
+        table_add_query = '''
+            INSERT INTO Tables (menu_link, qr_code, restaurant_id)
+            VALUES (?, ?, (
+                        SELECT id FROM Restaurant
+                        WHERE restaurant = ?
+                        )
+                    );
+        '''
+        self._db.execute(table_add_query, menu_link, qr_code, restaurant)
 
     """Изменения, добавления Блюда"""
     def update_menu_data(self, name, img, price, weight, comment, category, ingredients, restaurant, dishes_url=None):

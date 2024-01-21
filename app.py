@@ -208,16 +208,31 @@ def tables(restaurant):
             logging.error(f"Error: {str(e)}")
             return jsonify({'message': f'Error: {str(e)}'}), 500
 
-# @app.route('/admin_panel/<restaurant>/tables/add', methods='PUT')
-# def table_add(restaurant):
-#     if request.method == 'PUT':
-#
+@app.route('/admin_panel/<restaurant>/tables/add', methods=['POST'])
+def table_add(restaurant):
+    if request.method == 'POST':
+        try:
+            data = request.get_json()
+            print(data)
+
+            base.add_tables_data(
+                data.get('menu_link'),
+                data.get('qr_code'),
+                restaurant,
+            )
+
+            return jsonify({'message': 'Changes saved successfully'})
+        except Exception as e:
+            logging.error(f"Error: {str(e)}")
+            return jsonify({'message': f'Error: {str(e)}'}), 500
+
+
+
 @app.route('/admin_panel/<restaurant>/menu', methods=['GET', 'DELETE'])
 def menu(restaurant):
     if request.method == 'GET':
         menu_data = base.get_menu_data(restaurant)
         return jsonify({'menu': menu_data})
-
 
     elif request.method == 'DELETE':
         try:
