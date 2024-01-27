@@ -1,6 +1,6 @@
-from . import metadata
+from .db.Meta import metadata
 from sqlalchemy import (Table, Column, Integer, String,
-                        ForeignKey, VARCHAR, DateTime, BLOB)
+                        ForeignKey, VARCHAR, BLOB)
 
 
 # create tables here 
@@ -23,19 +23,19 @@ restaurant = Table(
                    unique=True, nullable=False),
     Column('name', String, nullable=False),
     Column('address', String, nullable=False),
-    Column('start_day', VARCHAR, nullable=True),
-    Column('end_day', VARCHAR, nullable=True),
-    Column('start_time', DateTime, nullable=True),
-    Column('end_time', DateTime, nullable=True) 
+    Column('start_day', VARCHAR(30), nullable=True),
+    Column('end_day', VARCHAR(30), nullable=True),
+    Column('start_time', VARCHAR(30), nullable=True),
+    Column('end_time', VARCHAR(30), nullable=True), 
+    Column('logo', String, nullable=True) 
 )
 
 categories = Table(
-    'categoryies',
+    'categories',
     metadata,
 
     Column('id', Integer, primary_key=True),
     Column('category', VARCHAR, nullable=False),
-    Column('url', VARCHAR),
     Column('color', VARCHAR),
     Column('restaurant_id', Integer, ForeignKey('restaurant.id', ondelete='CASCADE'))
 )
@@ -45,13 +45,12 @@ dishes = Table(
     metadata,
 
     Column('id', Integer, primary_key=True),
-    Column('img', BLOB),
+    Column('img', String),
     Column('name', VARCHAR, nullable=False),
-    Column('url', VARCHAR),
     Column('price', Integer),
     Column('weight', Integer),
     Column('comment', VARCHAR),
-    Column('category_id', Integer, ForeignKey('categoryies.id', ondelete='CASCADE'))
+    Column('category_id', Integer, ForeignKey('categories.id', ondelete='CASCADE'))
 )
 
 ingredients = Table(
@@ -82,7 +81,8 @@ tables = Table(
 
     Column('id', Integer, primary_key=True),
     Column('menu_link', VARCHAR),
-    Column('qr', BLOB),
+    Column('qr', String),
+    Column('table_number', Integer),
     Column('restaurant_id', Integer,
            ForeignKey('restaurant.id', ondelete='CASCADE'))
 )

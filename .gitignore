@@ -1,7 +1,8 @@
 
-# linux env
+# Linux python env
+
 bin/
 include/
 lib/
 lib64
-*.cfg
+*cfg
