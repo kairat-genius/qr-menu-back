@@ -1,7 +1,7 @@
 import requests
 import logging
-
-url = "http://localhost:8000"
+import time
+url = "http://localhost:8001"
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -10,15 +10,17 @@ console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 logger.addHandler(console_handler)
 
-token_cookie = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InN0cmlhd2Rhd2Rhd2QiLCJleHAiOjE3MDcwMzY0Nzh9.GKNGwZVKAps3y_lsFZ_1eovf0RpWF7YoVteRxrYno6U"
-cookies = {'token': token_cookie}
+with open("token.txt", "r") as file:
+    token_cookie = file.read()
+
+cookies = {'token': str(token_cookie)}
 
 
 class User:
     def register(self):
         data = {
-            "email": "t214555",
-            "password": "s123232g",
+            "email": "test",
+            "password": "test",
             "time": {
                 "type": "days",
                 "number": 1
@@ -30,16 +32,20 @@ class User:
 
     def login(self):
         data = {
-            "email": "t214",
-            "password": "s123232g",
+            "email": "test",
+            "password": "test",
             "time": {
                 "type": "days",
                 "number": 1
             }
         }
+
         response = requests.post(f"{url}/api/admin/login", json=data)
         assert response.status_code == 200
+        token = response.json()["token"]
         logger.info("Тест на авторизацию пройден." + str(response.json()["user_data"]))
+        with open("token.txt", "w") as file:
+            file.write(token)
 
 
 class Restaurant:
@@ -208,10 +214,12 @@ if __name__ == "__main__":
    """Проверку делать желательно по одному"""
    user.register() # регистарция
    user.login() # авторизация
+   time.sleep(10)
    restaurant.add_restaurant() # добавление ресторана
    restaurant.get_restaurant() # просмотр ресторана
    restaurant.update_restaurant() # изменения ресторана
    restaurant.delete_restaurant() # удаление ресторана
+   restaurant.add_restaurant()  # добавление ресторана повторно чтобы испытать другие части кода
    category.add_category() # добавление категорий
    category.get_categories() # просмотор категорий
    category.get_restaurant_category() # просмотр ресторана и его категорий
