@@ -1,30 +1,31 @@
 from pathlib import Path
-
-from dotenv import load_dotenv
+import json
 import os
 
 
 BASE_DIR = Path(__file__).parent.parent
-load_dotenv(BASE_DIR / ".env")
 
+# for peoduction set DEBUG = False
 DEBUG = False
 
 # DATABASE
-if DEBUG:
-    DATABASE = "sqlite+aiosqlite:///" + str(BASE_DIR) + "/db.sqlite3"
-    DATABASE_SYNC = "sqlite:///" + str(BASE_DIR) + "/db.sqlite3"
-else:
-    DATABASE_SYNC = os.environ.get("DATABASE_URL_SYNC")
-    DATABASE = os.environ.get("DATABASE_URL") # production
+DATABASE="postgresql+asyncpg://test:test@localhost:5435/test"
+DATABASE_SYNC="postgresql://test:test@localhost:5435/test"
 
+# redis
+REDIS_HOST = "localhost"
+REDIS_PORT = 6379
+REDIS_DB = 0
+
+# email | if DEBUG = False use docker env with the same constants
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 465
+SENDER_EMAIL = ...
+SENDER_PASSWORD = ...
 
 
 # DOMAIN - USE FOR QR-codes GENERATE
-DOMAIN = "http://127.0.0.1:8000"
-
-
-# JWT
-SECRET_KEY = os.environ.get("JWT_KEY")
+DOMAIN = "http://qrsystem.source.com"
 
 
 # LOGGNIG
@@ -45,16 +46,28 @@ app = FastAPI(
 )
 
 # CORS
+
+origins = list(json.loads(os.environ.get("CORS_ORIGINS_API"))) if "CORS_ORIGINS_API" in os.environ.keys() else ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=['*'],
+    allow_headers=["*"],
 )
-
 
 # ADMIN
 
     # Tables per page
 TABLES_PER_PAGE = 10
+
+    # LOGO
+MAX_WIDTH = 300
+MAX_HEIGHT = 300
+
+    # LOGO for QR-code
+QR_LOGO_WIDTH = 130
+QR_LOGO_HEIGHT = 130
+
+LOGO_OVRL = QR_LOGO_WIDTH + 20
