@@ -13,6 +13,7 @@ DATABASE="postgresql+asyncpg://test:test@localhost:5435/test"
 DATABASE_SYNC="postgresql://test:test@localhost:5435/test"
 
 # redis
+REDIS_PASSWORD="redistest"
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
 REDIS_DB = 0
@@ -62,6 +63,9 @@ app.add_middleware(
     # Tables per page
 TABLES_PER_PAGE = 10
 
+    # Tables per transaction
+TABLES_PER_TRANSACTION = 100
+
     # LOGO
 MAX_WIDTH = 300
 MAX_HEIGHT = 300
@@ -71,3 +75,11 @@ QR_LOGO_WIDTH = 130
 QR_LOGO_HEIGHT = 130
 
 LOGO_OVRL = QR_LOGO_WIDTH + 20
+
+    # Dishes image
+DISHES_IMG = 150
+
+
+# RECOVERY CODE LIVE TIME
+
+RECOVERY_TIME = 900 # 15 min

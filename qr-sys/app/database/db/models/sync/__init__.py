@@ -9,6 +9,7 @@ from .....settings import logger
 
 
 class sync_db:
+    """Синхрона взаємодія з базою данних"""
 
     def err(self, msg) -> ValueError:
         logger.error(f'{msg} is not instance of sqlalchemy.sql.schema.Table')
@@ -88,7 +89,7 @@ class sync_db:
             if isinstance(result, list):
                 result = [i._asdict() for i in result]
             else:
-                result = result._asdict()
+                result = result._asdict() if result else None
 
         return result if not count_items else [result, count_items]
 

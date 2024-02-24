@@ -2,23 +2,25 @@ from typing import Any
 from random import choice
 
 from ....redis import get_redis_connection
-from .....settings import REDIS_DB, DEBUG
+from .....settings import REDIS_DB, DEBUG, RECOVERY_TIME
 import os
 
+# Підключаємось до redis
+code = get_redis_connection(REDIS_DB + 3 if DEBUG else int(os.environ.get("REDIS_DB")) + 3)
 
 class recovery_codes:
 
-    def __init__(self) -> None:
-        self.code = get_redis_connection(REDIS_DB + 3 if DEBUG else int(os.environ.get("REDIS_DB")) + 3)
-
     def set_code(self) -> str:
+        """Створення коду для відновлення"""
         return "".join([str(choice(range(10))) for _ in range(6)])
 
+    # Збереження коду в бд redis та встановлення час його життя
     def __setitem__(self, key: Any, value: Any) -> None:
-        self.code.set(key, value)
+        code.set(key, value)
+        code.expire(key, RECOVERY_TIME)
 
     def __delitem__(self, key: Any) -> None:
-        self.code.delete(key)
+        code.delete(key)
 
     def __getitem__(self, key: Any) -> Any:
-        return self.code.get(key).decode()
+        return code.get(key).decode()

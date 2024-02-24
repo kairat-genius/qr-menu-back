@@ -10,7 +10,7 @@ import httpx
 
 
 @pytest_asyncio.fixture(scope="module", params=users)
-async def register(client: httpx.AsyncClient, request, event_loop):
+async def register(client: httpx.AsyncClient, request):
     user = request.param
 
     status, response, token = await registration(client, user)
@@ -27,7 +27,7 @@ async def register(client: httpx.AsyncClient, request, event_loop):
 async def test_login_by_token_fail(client: httpx.AsyncClient):
     status, _ = await login_by_token(client, "oueqwbfuoeqb")
 
-    assert status == 403
+    assert status == 401
 
 @pytest.mark.asyncio
 async def test_login_by_token_success(client: httpx.AsyncClient, register: str):
