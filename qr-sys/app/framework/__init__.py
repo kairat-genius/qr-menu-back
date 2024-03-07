@@ -29,3 +29,6 @@ from .email.object import send_mail
 # має обмеження по часу збереження в redis
 from .recovery.password.object import recovery_codes
 recovery = recovery_codes()
+
+from .recovery.delete_user.object import delete_user_codes
+delete_user_email = delete_user_codes()

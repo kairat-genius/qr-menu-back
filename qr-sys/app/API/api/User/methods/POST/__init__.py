@@ -1,4 +1,4 @@
-from ......framework import app, db, t, jwt, recovery, send_mail, logger
+from ......framework import app, db, t, jwt, recovery, delete_user_email, send_mail, logger
 
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import HTTPException
@@ -100,3 +100,33 @@ async def recovery_code_check(data: Recovery) -> ResponseCheckRecovery:
         return JSONResponse(status_code=200, content={"msg": "Код дійсний.", "id": id})
     
     raise HTTPException(status_code=403, detail="Введений код не дійсний")
+
+
+@app.post("/api/admin/set/delete/code", tags=[USER, EMAIL])
+async def delete_email_code(data: RecoverySetCode) -> RegisterResponseFail:
+    email = data.email
+
+    try:
+        find_user = await db.async_get_where(authefication, exp=authefication.c.email == email,
+                                             all_=False, to_dict=True)
+    except Exception as e:
+        logger.error(f"Ошибка при получении email для отправки кода удаление.\n\nEmail: {email}\nError: {e}")
+        return JSONResponse(status_code=400, content={"msg": "Ошибка при поиске пользователя"})
+
+    if find_user is None:
+        return JSONResponse(status_code=400, content={"msg": "Пользователь отсутствует в системе"})
+
+    find_user = find_user["email"]
+    code = delete_user_email.set_code()
+
+    delete_user_email[find_user] = code
+
+    try:
+        msg = f"""If you want to delete your account, please ignore this mail.\nYour deletion code: {code}"""
+        send_mail.delay(find_user, "Restaurant QR-system account deletion", msg)
+        return JSONResponse(status_code=200, content={"msg": "Код отправлен в почту"})
+
+    except Exception as e:
+        del recovery[find_user]
+        logger.error(f"Ошибка при отправке email.\n\nEmail: {find_user}\nError: {e}")
+        return JSONResponse(status_code=500, content={"msg": "Неизвестная ошибка при обработке транзакии"})
