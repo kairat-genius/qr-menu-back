@@ -1,7 +1,7 @@
-from ......framework import app, db, t, jwt, recovery, delete_user_email, send_mail, logger
+from ......framework import app, db, t, jwt, recovery, send_mail, logger, delete_user_email
 
-from fastapi.responses import JSONResponse
 from fastapi.exceptions import HTTPException
+from fastapi.responses import JSONResponse
 
 from .....ValidationModels.Recovery import RecoverySetCode, Recovery
 from .....ResponseModels.Register import RegisterResponseFail
@@ -11,6 +11,7 @@ from .....ValidationModels.Login import LoginByLP
 
 from ......database.tables import (authefication)
 from .....tags import USER, EMAIL
+
 
 
 @app.post('/api/admin/register', tags=[USER])
@@ -31,10 +32,10 @@ async def register(data: RegisterUser) -> (RegisterResponseFail):
 
     playload, date, seconds = jwt.get_playload(user[0], user[2], **{time['type']: time['number']})
     token = jwt.get_token(**playload)
-    jwt.set(token, user[1], seconds)
+    jwt.object.set(token, user[1], seconds)
 
     response = JSONResponse(status_code=200, content={"msg": "Користувача зарєстровано"})
-    response.set_cookie(key="token", value=token, expires=date, httponly=True, secure=True, samesite="none")
+    response.set_cookie(**jwt.cookie_params(token, date))
     return response
 
 
@@ -53,10 +54,10 @@ async def login(data: LoginByLP) -> RegisterResponseFail:
     # Генеруємо новий токен, зберігаємо та повертаємо дані
     playload, date, seconds = jwt.get_playload(user.get("id"), user.get("email"), **{time_type: time})
     token = jwt.get_token(**playload)
-    jwt.set(token, user.get("hashf"), seconds)
+    jwt.object.set(token, user.get("hashf"), seconds)
 
     response = JSONResponse(status_code=200, content={"msg": "Вхід в систему успішний"})
-    response.set_cookie(key="token", value=token, expires=date, httponly=True, secure=True, samesite="none")
+    response.set_cookie(**jwt.cookie_params(token, date))
 
     return response
     
@@ -78,7 +79,7 @@ async def set_recovery_code(data: RecoverySetCode) -> RegisterResponseFail:
     try:
         msg = f"""If you don't request code for recovery, ignore this mail.\nYour code for recovery: {code}"""
         send_mail.delay(email, "Restaurant QR-system recovery account", msg)
-        return JSONResponse(status_code=200, content={"msg": "Плвідомлення надіслано"})
+        return JSONResponse(status_code=200, content={"msg": "Повідомлення надіслано"})
 
     except Exception as e:
         del recovery[email]
@@ -106,27 +107,15 @@ async def recovery_code_check(data: Recovery) -> ResponseCheckRecovery:
 async def delete_email_code(data: RecoverySetCode) -> RegisterResponseFail:
     email = data.email
 
-    try:
-        find_user = await db.async_get_where(authefication, exp=authefication.c.email == email,
-                                             all_=False, to_dict=True)
-    except Exception as e:
-        logger.error(f"Ошибка при получении email для отправки кода удаление.\n\nEmail: {email}\nError: {e}")
-        return JSONResponse(status_code=400, content={"msg": "Ошибка при поиске пользователя"})
-
-    if find_user is None:
-        return JSONResponse(status_code=400, content={"msg": "Пользователь отсутствует в системе"})
-
-    find_user = find_user["email"]
     code = delete_user_email.set_code()
-
-    delete_user_email[find_user] = code
+    delete_user_email[email] = code
 
     try:
-        msg = f"""If you want to delete your account, please ignore this mail.\nYour deletion code: {code}"""
-        send_mail.delay(find_user, "Restaurant QR-system account deletion", msg)
+        msg = f"""If you don't want to delete your account, please ignore this mail.\nYour deletion code: {code}"""
+        send_mail.delay(email, "Restaurant QR-system account deletion", msg)
         return JSONResponse(status_code=200, content={"msg": "Код отправлен в почту"})
 
     except Exception as e:
-        del recovery[find_user]
-        logger.error(f"Ошибка при отправке email.\n\nEmail: {find_user}\nError: {e}")
-        return JSONResponse(status_code=500, content={"msg": "Неизвестная ошибка при обработке транзакии"})
+        del recovery[email]
+        logger.error(f"Ошибка при отправке email.\n\nEmail: {email}\nError: {e}")
+        raise HTTPException(status_code=500, detail="Неизвестная ошибка при обработке транзакии")

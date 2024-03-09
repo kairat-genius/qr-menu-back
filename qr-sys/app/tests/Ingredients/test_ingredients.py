@@ -13,8 +13,9 @@ from ..Category.func import add_category, delete_category
 from .func import add_ingredient, get_ingredient, delete_ingredient
 from ..Dishes.func import get_dishes, add_dish, delete_dish
 
-import httpx
+from ...settings import COOKIE_KEY
 import pytest, pytest_asyncio
+import httpx
 
 
 @pytest_asyncio.fixture(scope="module", params=users)
@@ -26,9 +27,6 @@ async def setup_user(client: httpx.AsyncClient, request):
     assert status == 200 and RegisterResponseFail(**user)
 
     yield token
-
-    status = await delete_user(client, token)
-    assert status == 200
 
 @pytest_asyncio.fixture(scope="module")
 async def setup_retaurant(client: httpx.AsyncClient, setup_user: str):
@@ -133,7 +131,7 @@ async def test_get_ingredients(client: httpx.AsyncClient, add_ingredient_fixture
     get_corntone = [i async for i in add_ingredient_fixture]
     token, data = get_corntone[0][0], get_corntone[0][1]
 
-    cookie = {"token": token}
+    cookie = {COOKIE_KEY: token}
 
     for i in [i["dish_id"] for i in data]:
         request = await client.get(f"/api/admin/get/ingredients?dish_id={i}", cookies=cookie)

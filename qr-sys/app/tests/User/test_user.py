@@ -5,6 +5,7 @@ from .func import (login, login_by_token,
                    registration, delete_user)
 from . import users
 
+from ...settings import COOKIE_KEY
 import pytest, pytest_asyncio
 import httpx
 
@@ -18,10 +19,6 @@ async def register(client: httpx.AsyncClient, request):
     assert status == 200 and RegisterResponseFail(**response)
 
     yield token, user
-
-    status = await delete_user(client, token)
-    
-    assert status == 200
 
 @pytest.mark.asyncio
 async def test_login_by_token_fail(client: httpx.AsyncClient):
@@ -37,7 +34,7 @@ async def test_login_by_token_success(client: httpx.AsyncClient, register: str):
 
 @pytest.mark.asyncio
 async def test_delete_user_session(client: httpx.AsyncClient, register: str):
-    cookie = {"token": register[0]}
+    cookie = {COOKIE_KEY: register[0]}
 
     request = await client.delete('/api/admin/delete/session/user',
                             cookies=cookie)
@@ -57,13 +54,13 @@ async def test_login_fail(client: httpx.AsyncClient, register: tuple):
 
     data['password'] = "".join([chr(ord(i) + 2) for i in data["password"]])
 
-    status, user, _ =  await login(client, data)
+    status, _, _ =  await login(client, data)
 
     assert status == 403
 
 @pytest.mark.asyncio
 async def test_get_full_info_fail(client: httpx.AsyncClient, register: tuple):
-    cookie = {"token": register[0]}
+    cookie = {COOKIE_KEY: register[0]}
 
     request = await client.get('/api/admin/get-full-info/user',
                          cookies=cookie)

@@ -1,11 +1,12 @@
-
-from ....redis import get_redis_connection
-from .....settings import REDIS_DB, DEBUG, DELETE_USER_TIME
-import os
-from typing import Any
+from .....settings import REDIS_DB, DELETE_USER_TIME
 from ...password.object import recovery_codes
+from ....redis import get_redis_connection
+from typing import Any
+import os
 
-code = get_redis_connection(REDIS_DB + 4 if DEBUG else int(os.environ.get("REDIS_DB")) + 4)
+
+code = get_redis_connection(int(os.environ.get("REDIS_DB", REDIS_DB)) + 4)
+
 class delete_user_codes(recovery_codes):
 
     def __setitem__(self, key: Any, value: Any) -> None:

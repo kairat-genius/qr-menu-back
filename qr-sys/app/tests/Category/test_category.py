@@ -8,6 +8,7 @@ from ..User.func import registration, delete_user
 from ..User import users
 from .func import add_category, delete_category
 
+from ...settings import COOKIE_KEY
 import pytest, pytest_asyncio
 import httpx
 
@@ -28,9 +29,6 @@ async def setup(client: httpx.AsyncClient, request):
     yield token
 
     status, _ = await delete_resturant(client, token)
-    assert status == 200
-
-    status = await delete_user(client, token)
     assert status == 200
 
 
@@ -79,7 +77,7 @@ async def test_delete_categories_fail(client: httpx.AsyncClient):
 
 @pytest.mark.asyncio
 async def test_get_categories(client: httpx.AsyncClient, setup: str, add_category_fixture):
-    cookie = {"token": setup}
+    cookie = {COOKIE_KEY: setup}
 
     request = await client.get("/api/admin/get/categories", cookies=cookie)
 
@@ -88,7 +86,7 @@ async def test_get_categories(client: httpx.AsyncClient, setup: str, add_categor
 
 @pytest.mark.asyncio
 async def test_get_full_categories(client: httpx.AsyncClient, setup: str, add_category_fixture):
-    cookie = {"token": setup}
+    cookie = {COOKIE_KEY: setup}
 
     request = await client.get('/api/admin/get-full-info/categories', cookies=cookie)
 

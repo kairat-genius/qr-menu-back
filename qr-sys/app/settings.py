@@ -6,7 +6,11 @@ import os
 BASE_DIR = Path(__file__).parent.parent
 
 # for production set DEBUG = False
-DEBUG = False
+DEBUG = True
+
+# COOKIE
+COOKIE_KEY = "QR_MENU_TOKEN"
+
 
 # DATABASE
 DATABASE="postgresql+asyncpg://test:test@localhost:5435/test"
@@ -85,4 +89,5 @@ DISHES_IMG = 150
 RECOVERY_TIME = 900 # 15 min
 
 # DELETE_USER CODE LIVE TIME
+
 DELETE_USER_TIME = 300 # 5 min

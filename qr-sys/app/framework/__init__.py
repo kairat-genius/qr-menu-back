@@ -10,10 +10,6 @@ t = trash()
 # Обьєкт керування токенами
 from .JWT import jwt
 
-# Обьєкт який валідаціє токени
-from .JWT.validation import JWTValidation
-jwt_validation = JWTValidation()
-
 
 # Логер та сам додаток 
 from ..settings import logger, app
@@ -29,6 +25,7 @@ from .email.object import send_mail
 # має обмеження по часу збереження в redis
 from .recovery.password.object import recovery_codes
 recovery = recovery_codes()
+
 
 from .recovery.delete_user.object import delete_user_codes
 delete_user_email = delete_user_codes()
