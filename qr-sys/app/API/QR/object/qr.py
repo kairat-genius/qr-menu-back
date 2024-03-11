@@ -1,6 +1,8 @@
 from ....database.db.models import sync, _async
 
-from ....settings import DOMAIN, DEBUG, TABLES_PER_PAGE, QR_LOGO_HEIGHT, QR_LOGO_WIDTH, LOGO_OVRL, logger
+from ....settings import (DOMAIN, TABLES_PER_PAGE,
+                         QR_LOGO_HEIGHT, QR_LOGO_WIDTH, 
+                         LOGO_OVRL, CLIENT_MENU_LINK, logger)
 from ....database.tables import tables
 
 from ...image.object import image
@@ -43,8 +45,20 @@ class QR(image):
 
 
     def _qr(self, restaurant: str, id: int, table: int, *args) -> str:
-        domain = DOMAIN if DEBUG else os.environ.get('QR_DOMAIN')
-        url = f"{domain}/menu/{restaurant}?id={id}&table={table}"
+        domain = os.environ.get(
+            'QR_DOMAIN', 
+             DOMAIN
+        )
+        
+        menu_link = os.environ.get(
+            "CLIENT_MENU_LINK",
+             CLIENT_MENU_LINK
+        )
+
+        url = domain + menu_link.format(
+            restaurant=restaurant,
+            id=id, table=table
+        )
         
         logo, bg, fill = args
 

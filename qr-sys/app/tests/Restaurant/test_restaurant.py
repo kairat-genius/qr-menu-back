@@ -1,5 +1,5 @@
 from ...API.ResponseModels.Register import RegisterResponseFail
-from ...API.ResponseModels.Restaurant import RestaurantResponseSucces
+from ...API.ResponseModels.Restaurant import RestaurantData
 
 from .func import (get_restaurant, get_restaurant_update, 
                    delete_resturant, register_restaurant)
@@ -57,7 +57,7 @@ async def test_restaurant_data_delete_fail(client: httpx.AsyncClient):
 async def test_register_restaurant(client: httpx.AsyncClient, setup_user: str):
     status, data = await register_restaurant(client, get_restaurant(), setup_user)
 
-    assert status == 200 and RestaurantResponseSucces(**data)
+    assert status == 200 and RestaurantData(**data)
 
 
 @pytest.mark.asyncio
@@ -68,7 +68,7 @@ async def test_restaurant_update(client: httpx.AsyncClient, setup_user: str):
                           cookies=cookie, json=get_restaurant_update())
 
     update = request.json()
-    assert request.status_code == 200 and RestaurantResponseSucces(**update)
+    assert request.status_code == 200 and RestaurantData(**update)
 
 
 @pytest.mark.asyncio
@@ -77,7 +77,7 @@ async def test_restaurant_get(client: httpx.AsyncClient, setup_user: str):
 
     request = await client.get('/api/admin/get/restaurant', cookies=cookie)
 
-    assert request.status_code == 200 and RestaurantResponseSucces(**request.json())
+    assert request.status_code == 200 and RestaurantData(**request.json())
 
 
 @pytest.mark.asyncio
@@ -88,7 +88,7 @@ async def test_restaurant_data_delete(client: httpx.AsyncClient, setup_user: str
                                  json={"start_day": True})
 
     data = request.json()
-    assert request.status_code == 200 and RestaurantResponseSucces(**data)
+    assert request.status_code == 200 and RestaurantData(**data)
 
 
 @pytest.mark.asyncio

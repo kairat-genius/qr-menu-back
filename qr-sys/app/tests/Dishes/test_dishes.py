@@ -1,7 +1,7 @@
 from ...API.ResponseModels.Register import RegisterResponseFail
-from ...API.ResponseModels.Restaurant import RestaurantResponseSucces
+from ...API.ResponseModels.Restaurant import RestaurantData
 from ...API.ResponseModels.Category import CategoryTable
-from ...API.ResponseModels.Dishes import Dish, DishResponseList
+from ...API.ResponseModels.Dishes import Dish
 
 from ..Restaurant.func import (get_restaurant, register_restaurant,
                                delete_resturant)
@@ -32,7 +32,7 @@ async def setup_retaurant(client: httpx.AsyncClient, setup_user: str):
     status, data = await register_restaurant(client, get_restaurant(),
                         setup_user)
     
-    assert status == 200 and RestaurantResponseSucces(**data)
+    assert status == 200 and RestaurantData(**data)
 
     yield setup_user
 
@@ -102,7 +102,7 @@ async def test_get_dish(client: httpx.AsyncClient, setup_categories: tuple[str, 
         request = await client.get(f"/api/admin/get/dish?category_id={i.get('id')}",
                              cookies=cookie)
         
-        assert request.status_code == 200 and DishResponseList(**request.json())
+        assert request.status_code == 200 and isinstance(request.json(), list) is True
 
 @pytest.mark.asyncio
 async def test_delete_dishes(client: httpx.AsyncClient, setup_categories: tuple[str, list[dict]]):

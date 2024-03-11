@@ -1,9 +1,7 @@
-from ......database.tables import dishes, restaurant
-from ......framework import app, jwt, db, logger
 from .....ValidationModels.Dishes import Dish
+from ......framework import app, jwt, Person
 from .....tags import DISHES
 
-from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 from fastapi import Depends
 
@@ -13,14 +11,10 @@ async def add_dish(data: Dish, hashf: str = Depends(jwt)) -> Dish:
 
     insert_data = data.model_dump()
 
-    restaurant_id = await db.async_get_where(restaurant.c.id, exp=restaurant.c.hashf == hashf,
-                                             all_=False, to_dict=True)
-    
-    insert_data = insert_data | {"restaurant_id": restaurant_id.get("id")}
+    user = await Person(hashf).initialize()
 
-    try: new_dish = await db.async_insert_data(dishes, to_dict=True, **insert_data)
-    except Exception as e:
-        logger.error(f"Помилка при додавані страви\n\nСессія: {hashf}\n\nError: {e}")
-        raise HTTPException(status_code=500, detail='Невідома помилка під час виконання')
+    restaurant = await user.get_restaurant()
 
-    return JSONResponse(status_code=200, content=new_dish)    
+    new_dish = await restaurant.add_dish(**insert_data)
+
+    return JSONResponse(status_code=200, content=dict(new_dish))    

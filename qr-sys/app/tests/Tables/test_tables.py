@@ -1,9 +1,9 @@
-from ...API.ResponseModels.Restaurant import RestaurantResponseSucces
 from ...API.ResponseModels.Register import RegisterResponseFail
+from ...API.ResponseModels.Restaurant import RestaurantData
 from ...API.ResponseModels.Tables import GetTablesResponse
 
 from ..Restaurant.func import delete_resturant, register_restaurant, get_restaurant
-from ..User.func import registration, delete_user
+from ..User.func import registration
 from ..User import users
 
 from ...settings import COOKIE_KEY
@@ -22,7 +22,7 @@ async def setup(client: httpx.AsyncClient, request):
     status, data =  await register_restaurant(client, get_restaurant(image=True),
                         token)
     
-    assert status == 200 and RestaurantResponseSucces(**data)
+    assert status == 200 and RestaurantData(**data)
 
     yield token
 

@@ -1,7 +1,9 @@
-from ......framework import app, db, t, jwt, recovery, send_mail, logger, delete_user_email
+from ......framework import (app, db, t, jwt, recovery, send_mail, 
+                             logger, delete_user_email, Person)
 
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
+from fastapi import Depends
 
 from .....ValidationModels.Recovery import RecoverySetCode, Recovery
 from .....ResponseModels.Register import RegisterResponseFail
@@ -104,8 +106,10 @@ async def recovery_code_check(data: Recovery) -> ResponseCheckRecovery:
 
 
 @app.post("/api/admin/set/delete/code", tags=[USER, EMAIL])
-async def delete_email_code(data: RecoverySetCode) -> RegisterResponseFail:
-    email = data.email
+async def delete_email_code(hashf: str = Depends(jwt)) -> RegisterResponseFail:
+    
+    user = await Person(hashf).initialize()
+    email = user.email
 
     code = delete_user_email.set_code()
     delete_user_email[email] = code

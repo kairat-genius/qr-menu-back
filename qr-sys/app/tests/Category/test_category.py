@@ -1,10 +1,10 @@
 from ...API.ResponseModels.Register import RegisterResponseFail
-from ...API.ResponseModels.Restaurant import RestaurantResponseSucces
+from ...API.ResponseModels.Restaurant import RestaurantData
 from ...API.ResponseModels.Category import CategoryTable
 
 from ..Restaurant.func import (get_restaurant, register_restaurant,
                                delete_resturant)
-from ..User.func import registration, delete_user
+from ..User.func import registration
 from ..User import users
 from .func import add_category, delete_category
 
@@ -24,7 +24,7 @@ async def setup(client: httpx.AsyncClient, request):
     status, data = await register_restaurant(client, get_restaurant(),
                         token)
     
-    assert status == 200 and RestaurantResponseSucces(**data)
+    assert status == 200 and RestaurantData(**data)
 
     yield token
 

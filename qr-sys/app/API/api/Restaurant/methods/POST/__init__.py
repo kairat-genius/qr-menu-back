@@ -1,16 +1,14 @@
-from .....ResponseModels.Restaurant import (RestaurantResponseSucces)
 from .....ValidationModels.Restaurant import RestaurantRegister
-from ......framework import app, logger, jwt, db, t
-from ......database.tables import restaurant 
+from .....ResponseModels.Restaurant import RestaurantData
+from ......framework import app, jwt, Person
 from .....tags import RESTAURANT
 
-from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 from fastapi import Depends
 
 
 @app.post('/api/admin/add/restaurant', tags=[RESTAURANT])
-async def restaurant_add(data: RestaurantRegister, hashf: str = Depends(jwt)) -> RestaurantResponseSucces:
+async def restaurant_add(data: RestaurantRegister, hashf: str = Depends(jwt)) -> RestaurantData:
 
     """
     
@@ -22,13 +20,10 @@ async def restaurant_add(data: RestaurantRegister, hashf: str = Depends(jwt)) ->
 
     restaurant_data = data.model_dump()
 
-    filter_data = restaurant_data | {'hashf': hashf}
+    user = await Person(hashf).initialize()
 
-    try: restaurant_data = await db.async_insert_data(restaurant, **filter_data)
-    except Exception as e:
-        logger.error(e)
-        raise HTTPException(status_code=423, detail='Ресторан з таким користувачем вже інсує')
+    restaurant = await user.add_restaurant(**restaurant_data)
 
-    return JSONResponse(status_code=200, content={'restaurant_data': t.parse_user_data(restaurant_data._asdict())})
+    return JSONResponse(status_code=200, content=dict(restaurant))
 
 

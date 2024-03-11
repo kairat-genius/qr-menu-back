@@ -1,11 +1,11 @@
 from pydantic import BaseModel
-from typing import List, Tuple
+from typing import List
 
 
 class CategoryTable(BaseModel):
     id: int
     category: str
-    color: Tuple[int, int, int]
+    color: List[int]
     restaurant_id: int
 
 

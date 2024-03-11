@@ -60,7 +60,8 @@ class async_db:
     async def async_get_where(self, instance: object, 
                   and__ = None, exp = None, 
                   all_: bool = True, count: bool = False,
-                  offset: int = None, limit: int = None, to_dict: bool = False):
+                  offset: int = None, limit: int = None, 
+                  to_dict: bool = False, to_object: object = None):
 
         query = select(instance)
 
@@ -87,11 +88,10 @@ class async_db:
 
         if to_dict:
             if isinstance(result, list):
-                result = [i._asdict() for i in result]
+                result = [to_object(**i._asdict()) for i in result] if to_object else  [i._asdict() for i in result]
             else:
                 result = result._asdict() if result else None
-        
-        print(result)
+
         return result if not count_items else [result, count_items]
 
 

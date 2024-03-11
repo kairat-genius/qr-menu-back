@@ -5,9 +5,6 @@ import os
 
 BASE_DIR = Path(__file__).parent.parent
 
-# for production set DEBUG = False
-DEBUG = True
-
 # COOKIE
 COOKIE_KEY = "QR_MENU_TOKEN"
 
@@ -31,7 +28,7 @@ SENDER_PASSWORD = ...
 
 # DOMAIN - USE FOR QR-codes GENERATE
 DOMAIN = "http://qrsystem.source.com"
-
+CLIENT_MENU_LINK = "/menu/{restaurant}/{id}/{table}"
 
 # LOGGNIG
 import logging

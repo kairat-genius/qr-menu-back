@@ -1,29 +1,25 @@
-from ......framework import jwt, app, db, t, logger
+from ......framework import jwt, app, db, logger, Person
+from .....ResponseModels.Register import RegisterUserData
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
-
-from ......database.tables import (authefication, restaurant, 
-                                   tables, categories)
-
-from .....ResponseModels.Login import SuccesLogin
-
+from ......database.tables import tables
 from fastapi import Depends
 from .....tags import USER
 
 
 @app.get("/api/admin/login/token", tags=[USER])
-async def login_by_token(hashf: str = Depends(jwt)) -> SuccesLogin:
+async def login_by_token(hashf: str = Depends(jwt)) -> RegisterUserData:
 
     """
     <h1>Логування в систему за допомогою JWT токену</h1>
     <p><strong>Щоб отримати данні користувача</strong> та виконати успішне логування у користувача в 
     <strong>cookie</strong> повинен знаходитись JWT токен. Він повинен бути дійсним та мати <strong>ключ token</strong> </p>
     """
-    try: 
-        user = await db.async_get_where(authefication, exp=authefication.c.hashf == hashf,
-                        all_=False)
 
-        return JSONResponse(status_code=200, content={'user_data': t.parse_user_data(user._asdict())})
+    try: 
+        user = await Person(hashf).initialize()
+
+        return JSONResponse(status_code=200, content=user.get_parse_data())
     except:
         logger.error(f"JWT {hashf} відстуній в JWTMetaData, але залишається дійсним")
         raise HTTPException(status_code=403, detail='Згенеруйте новий токен для користувача')
@@ -45,26 +41,22 @@ async def get_full_info_from_user(hashf: str = Depends(jwt)):
     <br><strong>}</strong></span>
     
     """
-   
-    from_user = await db.async_join_data(authefication, restaurant,
-                                     table_2exp=restaurant.c.hashf == hashf, 
-                                     exp=authefication.c.hashf == hashf)
-    
-    restaurant_id = from_user["restaurant"]["id"] if "restaurant" in from_user else HTTPException(status_code=400, 
-                                                                                                  detail="Потрібно зарєструвати заклад для виконання цього запиту")
 
-    if isinstance(restaurant_id, HTTPException):
-        raise restaurant_id
+    user = await Person(hashf).initialize()
 
-    from_restaurant = await db.async_get_where(categories, exp=categories.c.restaurant_id == restaurant_id, 
-                                               to_dict=True)
+    restaurant_data = await user.get_restaurant()
 
+    category = await restaurant_data.get_categories()
 
-    table_count = await db.async_get_where(tables, exp=tables.c.restaurant_id == restaurant_id,
+    table_count = await db.async_get_where(tables, exp=tables.c.restaurant_id == restaurant_data.id,
                                            all_=False, count=True)
+
+
+
+    data = user.get_parse_data() | {"restaurant": dict(restaurant_data) 
+                                 |         {"categories": [dict(i) for i in category]}
+                                 |         {"tables_count": table_count[0] if table_count else 0}
+                                 }
+
     
-    if "restaurant" in from_user:
-        from_user["restaurant"]["categories"] = from_restaurant
-        from_user["restaurant"]["tables"] = table_count[1] if table_count else 0
-    
-    return JSONResponse(status_code=200, content=from_user)
+    return JSONResponse(status_code=200, content=data)

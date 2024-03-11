@@ -1,6 +1,6 @@
 from ...API.ResponseModels.Register import RegisterResponseFail
-from ...API.ResponseModels.Restaurant import RestaurantResponseSucces
-from ...API.ResponseModels.Ingredients import Ingredient, IngredientGetResponse
+from ...API.ResponseModels.Restaurant import RestaurantData
+from ...API.ResponseModels.Ingredients import Ingredient
 from ...API.ResponseModels.Category import CategoryTable
 from ...API.ResponseModels.Dishes import Dish
 
@@ -33,7 +33,7 @@ async def setup_retaurant(client: httpx.AsyncClient, setup_user: str):
     status, data = await register_restaurant(client, get_restaurant(),
                         setup_user)
     
-    assert status == 200 and RestaurantResponseSucces(**data)
+    assert status == 200 and RestaurantData(**data)
 
     yield setup_user
 
@@ -136,6 +136,6 @@ async def test_get_ingredients(client: httpx.AsyncClient, add_ingredient_fixture
     for i in [i["dish_id"] for i in data]:
         request = await client.get(f"/api/admin/get/ingredients?dish_id={i}", cookies=cookie)
 
-        assert request.status_code == 200 and IngredientGetResponse(**request.json())
+        assert request.status_code == 200 and isinstance(request.json(), list) is True
 
 

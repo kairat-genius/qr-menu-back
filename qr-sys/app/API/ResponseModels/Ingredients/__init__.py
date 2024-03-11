@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import List
 
 
 class Ingredient(BaseModel):
@@ -7,6 +6,3 @@ class Ingredient(BaseModel):
     ingredient: str
     dish_id: int
     restaurant_id: int
-
-class IngredientGetResponse(BaseModel):
-    data: List[Ingredient]
