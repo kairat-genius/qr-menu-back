@@ -11,7 +11,7 @@ async def restaurant_data_update(data: RestaurantUpdate, hashf: str = Depends(jw
 
     new_data = {k: v for k, v in data.model_dump().items() if v}
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
     restaurant = await user.get_restaurant()
 
     restaurant.update_attr(**new_data)
@@ -27,7 +27,7 @@ async def delete_restaurant_data(data: RestaurantDataDelete, hashf: str = Depend
     <h1>Якщо ключ має значення true тоді це поле буде видаленно з БД</h1>
     """
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
     restaurant = await user.get_restaurant()
 
     data_to_delete = data.model_dump()

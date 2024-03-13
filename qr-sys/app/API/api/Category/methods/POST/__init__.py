@@ -10,7 +10,7 @@ from fastapi import Depends
 @app.post('/api/admin/add/category', tags=[CATEGORY])
 async def add_category(data: CategorySet, hashf: str = Depends(jwt)) -> CategoryTable:
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
 
     restaurant = await user.get_restaurant()
 

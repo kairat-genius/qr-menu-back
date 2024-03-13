@@ -61,6 +61,13 @@ async def test_register_restaurant(client: httpx.AsyncClient, setup_user: str):
 
 
 @pytest.mark.asyncio
+async def test_register_restaurant_already_exists(client: httpx.AsyncClient, setup_user: str):
+    status, _ = await register_restaurant(client, get_restaurant(), setup_user)
+
+    assert status == 423
+
+
+@pytest.mark.asyncio
 async def test_restaurant_update(client: httpx.AsyncClient, setup_user: str):
     cookie = {COOKIE_KEY: setup_user}
     
@@ -68,6 +75,10 @@ async def test_restaurant_update(client: httpx.AsyncClient, setup_user: str):
                           cookies=cookie, json=get_restaurant_update())
 
     update = request.json()
+    assert (update == get_restaurant() | {"address": "st. Example, 202", "start_day": "Monday", 
+                                         "end_day": "Friday", "start_time": "9:00", 
+                                         "end_time": "21:00", "id": update.get("id")}) is True
+    
     assert request.status_code == 200 and RestaurantData(**update)
 
 
@@ -85,9 +96,14 @@ async def test_restaurant_data_delete(client: httpx.AsyncClient, setup_user: str
     cookie = {COOKIE_KEY: setup_user}
 
     request = await client.patch("/api/admin/delete/data", cookies=cookie,
-                                 json={"start_day": True})
+                                 json={"start_day": True, "start_time": True})
 
     data = request.json()
+
+    assert (data == get_restaurant() | {"address": "st. Example, 202", "start_day": None, 
+                                         "end_day": "Friday", "start_time": None, 
+                                         "end_time": "21:00", "id": data.get("id")}) is True
+    
     assert request.status_code == 200 and RestaurantData(**data)
 
 

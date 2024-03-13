@@ -9,7 +9,7 @@ from .....tags import RESTAURANT
 @app.get('/api/admin/get/restaurant', tags=[RESTAURANT])
 async def get_restaurant(hashf: str = Depends(jwt)) -> RestaurantData:
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
 
     restaurant = await user.get_restaurant()
 

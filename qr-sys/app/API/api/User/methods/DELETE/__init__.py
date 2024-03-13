@@ -30,7 +30,7 @@ async def delete_user(data: DeleteUser, hashf: str = Depends(jwt)) -> ResponseCh
     <h1>Повністью видаляє користувача з системи</h1>
     """
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
     email, code = user.email, data.code
 
     if code == delete_user_email[email]:

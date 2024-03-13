@@ -1,10 +1,6 @@
 import re, os
-from app.settings import (DEBUG, REDIS_PORT, REDIS_PASSWORD,
-                          DATABASE)
+from app.settings import (REDIS_PORT, REDIS_PASSWORD, DATABASE)
 
-
-if not DEBUG:
-    raise Exception("Set DEBUG=True for no production enviroment")
 
 # Виявлення операційної системи
 your_os = os.name == "posix"

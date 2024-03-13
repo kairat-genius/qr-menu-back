@@ -1,10 +1,7 @@
 from .....ResponseModels.Register import RegisterResponseFail
 from .....ValidationModels.Recovery import RecoveryPassword
-from ......framework import app, db, t, logger
-from fastapi.exceptions import HTTPException
+from ......framework import app, t, Person
 from fastapi.responses import JSONResponse
-
-from ......database.tables import authefication
 from .....tags import USER
 
 
@@ -16,12 +13,9 @@ async def recovery_password(data: RecoveryPassword) -> RegisterResponseFail:
     """
 
     user_id, password = data.id, t.get_hash(data.password)
+
+    user = await Person(id=user_id).initialize()
     
-    change_password = {"password": password}
-    try: await db.async_update_data(authefication, exp=authefication.c.id == user_id,
-                                    **change_password)
-    except Exception as e:
-        logger.error(f"Помилка під час зміни паролю користувача.\n\nId: {user_id}\nError: {e}")
-        raise HTTPException(status_code=500, detail="Невідома помилка під час обробки транзакції")
+    await user.update_user_data(password=password)
     
     return JSONResponse(status_code=200, content={"msg": "Пароль для користувача змінено"})

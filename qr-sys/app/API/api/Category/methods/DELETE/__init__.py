@@ -16,7 +16,7 @@ async def delete_categories(type: CategoryDelType, category_id: int = 0, hashf: 
     
     """
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
 
     restaurant = await user.get_restaurant()
 

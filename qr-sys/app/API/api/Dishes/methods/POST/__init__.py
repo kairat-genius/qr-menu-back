@@ -11,7 +11,7 @@ async def add_dish(data: Dish, hashf: str = Depends(jwt)) -> Dish:
 
     insert_data = data.model_dump()
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
 
     restaurant = await user.get_restaurant()
 

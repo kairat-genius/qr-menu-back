@@ -26,6 +26,7 @@ services:
   api:
     container_name: qrmenu
     image: dchnkoo/qr-sys
+    build: ./qr-sys
     env_file:
       - qr-sys/.env
     ports:

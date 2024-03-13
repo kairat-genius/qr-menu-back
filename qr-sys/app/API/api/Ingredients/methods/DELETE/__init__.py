@@ -9,7 +9,7 @@ from fastapi import Depends
 @app.delete("/api/admin/delete/ingredients", tags=[INGREDIENTS])
 async def delete_ingredients(ingredient_id: int, dish_id: int, hashf: str = Depends(jwt)) -> RegisterResponseFail:
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
 
     restaurant = await user.get_restaurant()
 

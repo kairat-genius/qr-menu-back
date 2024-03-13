@@ -13,14 +13,6 @@ from typing import Any, Tuple
 class async_db:
     """Асинхрона модель взаємодії з базою данних"""
 
-    def __init__(self) -> None:
-        self._session = sessionmaker(
-                bind=engine,
-                class_=AsyncSession,
-                expire_on_commit=False
-            )
-
-
     def err(self, msg) -> ValueError:
         logger.error(f'{msg} is not instance of sqlalchemy.sql.schema.Table')
         raise ValueError(f'{msg} is not instance of sqlalchemy.sql.schema.Table')
@@ -34,7 +26,11 @@ class async_db:
 
 
     async def get_async_session(self) -> AsyncSession:
-        return self._session()
+        return sessionmaker(
+                bind=engine,
+                class_=AsyncSession,
+                expire_on_commit=False
+            )()
 
 
     async def async_insert_data(self, instance: object, to_dict: bool = False, **kwargs):

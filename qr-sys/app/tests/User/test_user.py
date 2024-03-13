@@ -21,6 +21,14 @@ async def register(client: httpx.AsyncClient, request, event_loop):
     yield token, user
 
 @pytest.mark.asyncio
+async def test_register_already_exists(client: httpx.AsyncClient, register: tuple, event_loop):
+    _, user  = register
+
+    status, _, _ = await registration(client, user)
+
+    assert status == 403 
+
+@pytest.mark.asyncio
 async def test_login_by_token_fail(client: httpx.AsyncClient, event_loop):
     status, _ = await login_by_token(client, "oueqwbfuoeqb")
 
@@ -54,9 +62,23 @@ async def test_login_fail(client: httpx.AsyncClient, register: tuple, event_loop
 
     data['password'] = "".join([chr(ord(i) + 2) for i in data["password"]])
 
-    status, _, _ =  await login(client, data)
+    status, response, _ =  await login(client, data)
 
-    assert status == 403
+    msg: str = response.get("detail")
+
+    assert status == 403 and msg.startswith("Хибний пароль") is True
+
+
+@pytest.mark.asyncio
+async def test_register_invalid_data(client: httpx.AsyncClient, register: tuple, event_loop):
+    _, user  = register
+
+    user.pop("password")
+
+    status, _, _ = await registration(client, user)
+
+    assert status == 422
+
 
 @pytest.mark.asyncio
 async def test_get_full_info_fail(client: httpx.AsyncClient, register: tuple, event_loop):

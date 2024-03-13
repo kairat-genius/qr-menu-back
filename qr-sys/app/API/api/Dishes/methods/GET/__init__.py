@@ -10,7 +10,7 @@ from fastapi import Depends
 @app.get('/api/admin/get/dish', tags=[DISHES])
 async def get_dishes(category_id: int, hashf: str = Depends(jwt)) -> List[Dish]:
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
 
     restaurant = await user.get_restaurant()
 

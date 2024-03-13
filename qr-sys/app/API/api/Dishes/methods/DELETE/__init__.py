@@ -10,7 +10,7 @@ from fastapi import Depends
 async def delete_dish(dish_id: int, category_id: int, hashf: str = Depends(jwt)) -> RegisterResponseFail:
     dish, category = dish_id, category_id
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
 
     restaurant = await user.get_restaurant()
 

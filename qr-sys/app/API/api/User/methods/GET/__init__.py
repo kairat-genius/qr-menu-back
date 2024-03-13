@@ -17,7 +17,7 @@ async def login_by_token(hashf: str = Depends(jwt)) -> RegisterUserData:
     """
 
     try: 
-        user = await Person(hashf).initialize()
+        user = await Person(hashf=hashf).initialize()
 
         return JSONResponse(status_code=200, content=user.get_parse_data())
     except:
@@ -42,7 +42,7 @@ async def get_full_info_from_user(hashf: str = Depends(jwt)):
     
     """
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
 
     restaurant_data = await user.get_restaurant()
 

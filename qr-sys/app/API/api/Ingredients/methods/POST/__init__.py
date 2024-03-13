@@ -11,7 +11,7 @@ from fastapi import Depends
 async def add_ingredient(data: IngredientScheme, hashf: str = Depends(jwt)) -> Ingredient:
     ingredient_data, dish_id = data.ingredient, data.dish_id
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
 
     restaurant = await user.get_restaurant()
 

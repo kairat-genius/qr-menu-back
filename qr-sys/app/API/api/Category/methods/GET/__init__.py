@@ -7,11 +7,10 @@ from fastapi import Depends
 
 
 
-
 @app.get('/api/admin/get/categories', tags=[CATEGORY])
 async def get_categories(hashf: str = Depends(jwt)) -> GetCategories:
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
 
     restaurant = await user.get_restaurant()
     category = await restaurant.get_categories()
@@ -22,7 +21,7 @@ async def get_categories(hashf: str = Depends(jwt)) -> GetCategories:
 @app.get("/api/admin/get-full-info/categories", tags=[CATEGORY])
 async def get_full_info_categories(hashf: str = Depends(jwt)):
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
     restaurant = await user.get_restaurant()
     
     category = await restaurant.get_categories()

@@ -20,7 +20,7 @@ async def restaurant_add(data: RestaurantRegister, hashf: str = Depends(jwt)) ->
 
     restaurant_data = data.model_dump()
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
 
     restaurant = await user.add_restaurant(**restaurant_data)
 

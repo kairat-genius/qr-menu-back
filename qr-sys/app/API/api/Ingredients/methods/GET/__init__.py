@@ -11,7 +11,7 @@ from fastapi import Depends
 @app.get('/api/admin/get/ingredients', tags=[INGREDIENTS])
 async def get_ingredients(dish_id: int, hashf: str = Depends(jwt)) -> List[Ingredient]:
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
 
     restaurant = await user.get_restaurant()
 

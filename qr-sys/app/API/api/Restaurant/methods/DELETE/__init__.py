@@ -9,7 +9,7 @@ from .....tags import RESTAURANT
 @app.delete('/api/admin/delete/restaurant', tags=[RESTAURANT])
 async def restaurant_delete(hashf: str = Depends(jwt)) -> RegisterResponseFail:
 
-    user = await Person(hashf).initialize()
+    user = await Person(hashf=hashf).initialize()
 
     restaurant = await user.get_restaurant()
     await restaurant.delete_restaurant()
