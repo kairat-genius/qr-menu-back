@@ -31,4 +31,4 @@ from .recovery.delete_user.object import delete_user_codes
 delete_user_email = delete_user_codes()
 
 
-from .person import Person
+from .person import Person, Restaurant

@@ -17,4 +17,4 @@ async def add_dish(data: Dish, hashf: str = Depends(jwt)) -> Dish:
 
     new_dish = await restaurant.add_dish(**insert_data)
 
-    return JSONResponse(status_code=200, content=dict(new_dish))    
+    return JSONResponse(status_code=200, content=new_dish.get_data())    

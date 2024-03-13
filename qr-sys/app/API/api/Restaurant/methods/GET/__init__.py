@@ -13,4 +13,15 @@ async def get_restaurant(hashf: str = Depends(jwt)) -> RestaurantData:
 
     restaurant = await user.get_restaurant()
 
-    return JSONResponse(status_code=200, content=dict(restaurant))
+    return JSONResponse(status_code=200, content=restaurant.get_data())
+
+
+@app.get("/api/admin/get-full-info/restaurant", tags=[RESTAURANT])
+async def get_full_info_categories(hashf: str = Depends(jwt)):
+
+    user = await Person(hashf=hashf).initialize()
+    restaurant = await user.get_restaurant()
+
+    data = await restaurant.get_full_data()
+    
+    return JSONResponse(status_code=200, content={"restaurant": data})

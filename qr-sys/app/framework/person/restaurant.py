@@ -1,16 +1,15 @@
 from ...database.tables import (categories, restaurant,
                                  dishes, ingredients)
-from ...database.db.models._async import async_db
 from fastapi.exceptions import HTTPException
 from .ingredients import Ingredient
 from .categories import Category
-from ...settings import logger
 from typing import ByteString
 from fastapi import status
 from .dishes import Dish
+from .exc import exc
 
 
-class Restaurant(async_db):
+class Restaurant(exc):
     id: int
     name: str
     address: str | None
@@ -20,13 +19,52 @@ class Restaurant(async_db):
     end_time: str | None
     logo: ByteString | None
 
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
-        [
-            setattr(self, key, value) 
-            for key, value in kwargs.items() 
-            if key != "hashf"
-        ]
+    async def initialize(self):
+        try:
+            restaurant_data: dict = await self.async_get_where(
+                instance=restaurant,
+                and__=(
+                    restaurant.c.id == self.id,
+                    restaurant.c.name == self.name
+                ),
+                to_dict=True,
+                all_=False
+            )
+
+        except Exception as e:
+            raise self._throw_exeption_500(
+                func=self.initialize.__name__,
+                e=e
+            )
+        
+        if not isinstance(restaurant_data, dict):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Відсутній заклад."
+            )
+        
+        self.update_attr(**restaurant_data)
+        return self
+
+    async def get_full_data(self, id: bool = False):
+        category = await self.get_categories()
+
+        result = {
+            **self.get_parse_data(id=id),
+            "categories": [
+                {**i.get_parse_data(id=id), 
+                    "dishes": [
+                        {**j.get_parse_data(id=id),
+                            "ingredients": [
+                                l.get_parse_data(id=id) for l in await j.get_ingredients()
+                            ] 
+                        } for j in await i.get_dishes()
+                    ]
+                } for i in category 
+            ]
+        }
+
+        return result
 
     async def delete_restaurant(self):
         try:
@@ -47,7 +85,7 @@ class Restaurant(async_db):
                 instance=restaurant,
                 exp=restaurant.c.id == self.id,
                 to_dict=True,
-                **self.get_filter_data()
+                **self.get_parse_data(id=True)
             )        
         except Exception as e:
             raise self._throw_exeption_500(
@@ -258,23 +296,3 @@ class Restaurant(async_db):
 
         self.update_attr(**new_data)
         return self
-
-    def get_filter_data(self):
-        return {k: v for k, v in dict(self).items() if k != "id"}
-
-    def update_attr(self, **kwargs):
-        for key, value in kwargs.items():
-            if key not in ("hashf", "id"):
-                setattr(self, key, value)
-
-    def _throw_exeption_500(self, func, e: Exception):
-        logger.error(f"\nObject: {self.__class__.__name__}\n" \
-                         f"func: {func}" \
-                         f"Error: {e}")
-        return HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Невідома помилка під час транзакції"
-        )
-    
-    def __iter__(self):
-        return iter([(k, v) for k, v in self.__dict__.items() if not k.startswith("_")])

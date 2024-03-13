@@ -16,4 +16,4 @@ async def get_dishes(category_id: int, hashf: str = Depends(jwt)) -> List[Dish]:
 
     dishes = await restaurant.get_dishes(category_id)
 
-    return JSONResponse(status_code=200, content=[dict(i) for i in dishes])
+    return JSONResponse(status_code=200, content=[i.get_data() for i in dishes])

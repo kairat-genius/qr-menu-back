@@ -24,6 +24,6 @@ async def restaurant_add(data: RestaurantRegister, hashf: str = Depends(jwt)) ->
 
     restaurant = await user.add_restaurant(**restaurant_data)
 
-    return JSONResponse(status_code=200, content=dict(restaurant))
+    return JSONResponse(status_code=200, content=restaurant.get_data())
 
 

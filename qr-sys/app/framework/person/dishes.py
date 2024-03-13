@@ -1,13 +1,11 @@
-from ...database.db.models._async import async_db
 from ...database.tables import ingredients, dishes
 from fastapi.exceptions import HTTPException
 from .ingredients import Ingredient
-from ...settings import logger
 from typing import ByteString
-from fastapi import status
+from .exc import exc
 
 
-class Dish(async_db):
+class Dish(exc):
     id: int
     img: ByteString | None
     name: str
@@ -16,11 +14,6 @@ class Dish(async_db):
     comment: str
     category_id: int
     restaurant_id: int
-
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
-        for key, value in kwargs.items():
-            setattr(self, key, value)
 
     async def get_ingredients(self) -> list[Ingredient]:
         ingredient = await self.async_get_where(
@@ -49,7 +42,7 @@ class Dish(async_db):
             )
 
         except Exception as e:
-            raise self._throw_exception_500(
+            raise self._throw_exeption_500(
                 func=self.add_ingredient.__name__,
                 e=e
             )
@@ -68,7 +61,7 @@ class Dish(async_db):
             )
 
         except Exception as e:
-            raise self._throw_exception_500(
+            raise self._throw_exeption_500(
                 func=self.delete_ingredient.__name__,
                 e=e
             )
@@ -87,29 +80,9 @@ class Dish(async_db):
             )
 
         except Exception as e:
-            raise self._throw_exception_500(
+            raise self._throw_exeption_500(
                 func=self.delete_dish.__name__,
                 e=e
             )
 
         return True
-    
-
-    def _throw_exception_500(self, func: str, e: str):
-        logger.error(
-                f"\nObject: {self.__class__.__name__}\n" /
-                f"func: {func}\n" /
-                f"Error: {e}"
-            )
-            
-        return HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Невідома помилка під час виконання операції"
-        )
-
-
-    def __iter__(self):
-        return iter([
-            (k, v) for k, v in self.__dict__.items() 
-            if not k.startswith("_")
-        ])

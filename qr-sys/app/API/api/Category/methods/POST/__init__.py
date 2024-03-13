@@ -16,4 +16,4 @@ async def add_category(data: CategorySet, hashf: str = Depends(jwt)) -> Category
 
     new_category = await restaurant.add_category(**data.model_dump())
 
-    return JSONResponse(status_code=200, content=dict(new_category))
+    return JSONResponse(status_code=200, content=new_category.get_data())

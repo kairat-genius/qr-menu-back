@@ -1,34 +1,17 @@
 from ...database.tables import (authefication, restaurant)
-from ...database.db.models._async import async_db
 from fastapi.exceptions import HTTPException
 from sqlalchemy.exc import IntegrityError
 from .restaurant import Restaurant
-from ...settings import logger
 from fastapi import status
+from .exc import exc
 
 
-class Person(async_db):
+class Person(exc):
     id: int
     hashf: str
     email: str
     password: str
-
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
-
-        kw_keys = set(kwargs.keys())
-        obj_keys = set(self.__annotations__.keys())
-        
-        keys = obj_keys & kw_keys
-
-        if any(keys) is False:
-            raise Exception("Немає жодного атрибуту для " \
-                            "ініціалізації користувача")
-
-        for key in obj_keys & kw_keys:
-            setattr(self, key, kwargs.get(key))
-
-    
+ 
     async def initialize(self):
         search = []
         search.append(authefication.c.hashf == self.hashf) if self.hashf else None
@@ -174,24 +157,3 @@ class Person(async_db):
             )
 
         return Restaurant(**restaurant_data)
-
-    def get_parse_data(self):
-        return dict((key, value) for key, value in self.__iter__() if key not in {"hashf", "password"})
-    
-    def _throw_exeption_500(self, func, e: Exception):
-        logger.error(f"\nObject: {self.__class__.__name__}\n" \
-                         f"func: {func}" \
-                         f"Error: {e}")
-        return HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Невідома помилка під час транзакції"
-        )
-
-    def __iter__(self):
-        return iter([(k, getattr(self, k)) for k, _ in self.__annotations__.items()])
-    
-    def __getattr__(self, item):
-        if item in self.__annotations__.keys():
-            self.__dict__[item] = None
-        else:
-            raise Exception("Не можливо додати новий атрибут!")

@@ -52,6 +52,12 @@ async def test_restaurant_data_delete_fail(client: httpx.AsyncClient):
 
     assert request.status_code == 401 
 
+@pytest.mark.asyncio
+async def test_get_full_info_fail(client: httpx.AsyncClient):
+    request = await client.get('/api/admin/get-full-info/restaurant')
+
+    assert request.status_code == 401 and ("detail" in request.json()) is True
+
 
 @pytest.mark.asyncio
 async def test_register_restaurant(client: httpx.AsyncClient, setup_user: str):
@@ -80,6 +86,15 @@ async def test_restaurant_update(client: httpx.AsyncClient, setup_user: str):
                                          "end_time": "21:00", "id": update.get("id")}) is True
     
     assert request.status_code == 200 and RestaurantData(**update)
+
+
+@pytest.mark.asyncio
+async def test_get_full_info(client: httpx.AsyncClient, setup_user: str):
+    cookie = {COOKIE_KEY: setup_user}
+
+    request = await client.get('/api/admin/get-full-info/restaurant', cookies=cookie)
+
+    assert request.status_code == 200
 
 
 @pytest.mark.asyncio

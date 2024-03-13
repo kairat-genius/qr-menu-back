@@ -53,7 +53,7 @@ async def get_full_info_from_user(hashf: str = Depends(jwt)):
 
 
 
-    data = user.get_parse_data() | {"restaurant": dict(restaurant_data) 
+    data = user.get_parse_data() | {"restaurant": restaurant_data.get_data() 
                                  |         {"categories": [dict(i) for i in category]}
                                  |         {"tables_count": table_count[0] if table_count else 0}
                                  }

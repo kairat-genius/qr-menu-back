@@ -2,16 +2,17 @@ from app.API.ResponseModels.Register import RegisterResponseFail
 from app.API.ResponseModels.Register import RegisterUserData
 
 from .func import (login, login_by_token,
-                   registration, delete_user)
+                   registration)
 from . import users
 
 from ...settings import COOKIE_KEY
-import pytest, pytest_asyncio
+import pytest
+import pytest_asyncio
 import httpx
 
 
 @pytest_asyncio.fixture(scope="module", params=users)
-async def register(client: httpx.AsyncClient, request, event_loop):
+async def register(client: httpx.AsyncClient, request):
     user = request.param
 
     status, response, token = await registration(client, user)
@@ -37,7 +38,7 @@ async def test_login_by_token_fail(client: httpx.AsyncClient, event_loop):
 @pytest.mark.asyncio
 async def test_login_by_token_success(client: httpx.AsyncClient, register: str, event_loop):
     status, data = await login_by_token(client, register[0])
-
+    
     assert status == 200 and RegisterUserData(**data)
 
 @pytest.mark.asyncio

@@ -64,12 +64,6 @@ async def test_get_categories_fail(client: httpx.AsyncClient):
     assert request.status_code == 401 and ("detail" in request.json()) is True
 
 @pytest.mark.asyncio
-async def test_get_full_categories_fail(client: httpx.AsyncClient):
-    request = await client.get('/api/admin/get-full-info/categories')
-
-    assert request.status_code == 401 and ("detail" in request.json()) is True
-
-@pytest.mark.asyncio
 async def test_delete_categories_fail(client: httpx.AsyncClient):
     request = await client.delete('/api/admin/delete/categories')
 
@@ -83,14 +77,6 @@ async def test_get_categories(client: httpx.AsyncClient, setup: str, add_categor
 
     assert request.status_code == 200
 
-
-@pytest.mark.asyncio
-async def test_get_full_categories(client: httpx.AsyncClient, setup: str, add_category_fixture):
-    cookie = {COOKIE_KEY: setup}
-
-    request = await client.get('/api/admin/get-full-info/categories', cookies=cookie)
-
-    assert request.status_code == 200
 
 @pytest.mark.asyncio
 async def test_delete_category(client: httpx.AsyncClient, setup: str, add_category_fixture: tuple[dict]):

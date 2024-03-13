@@ -5,3 +5,4 @@ from .Tables import app
 from .Category import app
 from .Dishes import app
 from .Ingredients import app
+from .Client import app

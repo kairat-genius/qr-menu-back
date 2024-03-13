@@ -20,5 +20,5 @@ async def add_ingredient(data: IngredientScheme, hashf: str = Depends(jwt)) -> I
         ingredient=ingredient_data
     )
     
-    return JSONResponse(status_code=200, content=dict(ingredient))
+    return JSONResponse(status_code=200, content=ingredient.get_data())
 

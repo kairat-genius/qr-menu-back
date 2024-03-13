@@ -17,7 +17,7 @@ async def restaurant_data_update(data: RestaurantUpdate, hashf: str = Depends(jw
     restaurant.update_attr(**new_data)
     await restaurant.update_restaurant()
 
-    return JSONResponse(status_code=200, content=dict(restaurant))
+    return JSONResponse(status_code=200, content=restaurant.get_data())
 
 
 @app.patch("/api/admin/delete/data", tags=[RESTAURANT])
@@ -35,4 +35,4 @@ async def delete_restaurant_data(data: RestaurantDataDelete, hashf: str = Depend
 
     await restaurant.delete_data(*parse_data)
 
-    return JSONResponse(status_code=200, content=dict(restaurant))
+    return JSONResponse(status_code=200, content=restaurant.get_data())

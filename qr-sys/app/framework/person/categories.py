@@ -1,22 +1,15 @@
-from ...database.db.models._async import async_db
 from ...database.tables import dishes, categories
 from fastapi.exceptions import HTTPException
-from ...settings import logger
-from fastapi import status
 from .dishes import Dish
+from .exc import exc
 
 
-class Category(async_db):
+class Category(exc):
     id: int
     category: str
     color: list[int]
     restaurant_id: int
 
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-    
     async def get_dishes(self) -> list[Dish]:
         dish = await self.async_get_where(
             instance=dishes,
@@ -44,7 +37,7 @@ class Category(async_db):
             )
 
         except Exception as e:
-            raise self._throw_exception_500(
+            raise self._throw_exeption_500(
                 func=self.add_dish.__name__,
                 e=e
             )
@@ -63,7 +56,7 @@ class Category(async_db):
             )
 
         except Exception as e:
-            raise self._throw_exception_500(
+            raise self._throw_exeption_500(
                 func=self.delete_category.__name__,
                 e=e
             )
@@ -81,24 +74,9 @@ class Category(async_db):
             )
 
         except Exception as e:
-            raise self._throw_exception_500(
+            raise self._throw_exeption_500(
                 func=self.delete_category.__name__,
                 e=e
             )
 
         return True
-    
-    def _throw_exception_500(self, func: str, e: str):
-        logger.error(
-                f"\nObject: {self.__class__.__name__}\n" /
-                f"func: {func}\n" /
-                f"Error: {e}"
-            )
-            
-        return HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Невідома помилка під час виконання операції"
-        )
-
-    def __iter__(self):
-        return iter([(k, v) for k, v in self.__dict__.items() if not k.startswith("_")])
