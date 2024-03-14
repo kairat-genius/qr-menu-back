@@ -19,11 +19,9 @@ class exc(async_db):
             setattr(self, key, kwargs.get(key))
 
     def get_parse_data(self, id: bool = False):
-        secret = {"hashf", "password"}
+        return {k: v for k, v in self.get_data().items()
+                if not (k.endswith("id") if id else None)}
 
-        return dict((key, value) for key, value in self.get_data().items() 
-                    if key not in (secret | {"id", "restaurant_id"} if id else secret))
-    
     def get_data(self):
         return self.__dict__
 

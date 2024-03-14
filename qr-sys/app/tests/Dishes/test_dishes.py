@@ -5,7 +5,7 @@ from ...API.ResponseModels.Dishes import Dish
 
 from ..Restaurant.func import (get_restaurant, register_restaurant,
                                delete_resturant)
-from ..User.func import registration, delete_user
+from ..User.func import registration
 from ..User import users
 from ..Category.func import add_category, delete_category
 

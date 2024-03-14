@@ -8,8 +8,9 @@ from ...redis import get_redis_connection
 import datetime, os
 
 
-SECRET_KEY = get_redis_connection(int(os.environ.get("REDIS_DB", REDIS_DB)) + 2).get("SECRET_KEY")
-
+SECRET_KEY = get_redis_connection(
+    int(os.environ.get("REDIS_DB", REDIS_DB)) + 2
+).get("SECRET_KEY")
 
 class JWT:
 

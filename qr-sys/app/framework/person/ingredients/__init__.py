@@ -1,5 +1,5 @@
-from ...database.tables import ingredients
-from .exc import exc
+from ....database.tables import ingredients
+from ..exc import exc
 
 
 class Ingredient(exc):

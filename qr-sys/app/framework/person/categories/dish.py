@@ -1,14 +1,9 @@
-from ...database.tables import dishes, categories
-from fastapi.exceptions import HTTPException
-from .dishes import Dish
-from .exc import exc
+from ....database.tables import dishes
+from fastapi import HTTPException
+from ..dishes import Dish
 
 
-class Category(exc):
-    id: int
-    category: str
-    color: list[int]
-    restaurant_id: int
+class CategoryDish:
 
     async def get_dishes(self) -> list[Dish]:
         dish = await self.async_get_where(
@@ -61,22 +56,4 @@ class Category(exc):
                 e=e
             )
         
-        return True
-
-    async def delete_category(self) -> bool | HTTPException:
-        try:
-            await self.async_delete_data(
-                instance=categories,
-                and__=(
-                    categories.c.id == self.id,
-                    categories.c.restaurant_id == self.restaurant_id
-                )
-            )
-
-        except Exception as e:
-            raise self._throw_exeption_500(
-                func=self.delete_category.__name__,
-                e=e
-            )
-
         return True
