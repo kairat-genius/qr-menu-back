@@ -18,9 +18,22 @@ class exc(async_db):
         for key in obj_keys & kw_keys:
             setattr(self, key, kwargs.get(key))
 
-    def get_parse_data(self, id: bool = False):
-        return {k: v for k, v in self.get_data().items()
-                if not (k.endswith("id") if id else None)}
+    def get_parse_data(
+            self, 
+            id: bool = False,
+            secrets: bool = False
+        ):
+        data = self.get_data()
+
+        if id:
+            data = {k: v for k, v in data.items()
+                    if not k.endswith("id")}
+
+        if secrets:
+            data = {k: v for k, v in data.items()
+                    if k not in ("hashf", "password")}
+
+        return data
 
     def get_data(self):
         return self.__dict__

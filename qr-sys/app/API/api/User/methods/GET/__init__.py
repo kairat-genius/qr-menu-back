@@ -19,7 +19,7 @@ async def login_by_token(hashf: str = Depends(jwt)) -> RegisterUserData:
     try: 
         user = await Person(hashf=hashf).initialize()
 
-        return JSONResponse(status_code=200, content=user.get_parse_data())
+        return JSONResponse(status_code=200, content=user.get_parse_data(secrets=True))
     except:
         logger.error(f"JWT {hashf} відстуній в JWTMetaData, але залишається дійсним")
         raise HTTPException(status_code=403, detail='Згенеруйте новий токен для користувача')
@@ -53,10 +53,10 @@ async def get_full_info_from_user(hashf: str = Depends(jwt)):
 
 
 
-    data = user.get_parse_data() | {"restaurant": restaurant_data.get_data() 
-                                 |         {"categories": [i.get_data() for i in category]}
-                                 |         {"tables_count": table_count[0] if table_count else 0}
-                                   }
+    data = user.get_parse_data(secrets=True) | {"restaurant": restaurant_data.get_parse_data(secrets=True) 
+                                             |         {"categories": [i.get_data() for i in category]}
+                                             |         {"tables_count": table_count[0] if table_count else 0}
+                                             }
 
     
     return JSONResponse(status_code=200, content=data)

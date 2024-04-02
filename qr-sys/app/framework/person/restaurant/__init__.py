@@ -55,13 +55,13 @@ class Restaurant(
         category = await self.get_categories()
 
         result = {
-            **self.get_parse_data(id=id),
+            **self.get_parse_data(id=id, secrets=True),
             "categories": [
-                {**i.get_parse_data(id=id), 
+                {**i.get_parse_data(id=id, secrets=True), 
                     "dishes": [
-                        {**j.get_parse_data(id=id),
+                        {**j.get_parse_data(id=id, secrets=True),
                             "ingredients": [
-                                l.get_parse_data(id=id) for l in await j.get_ingredients()
+                                l.get_parse_data(id=id, secrets=True) for l in await j.get_ingredients()
                             ] 
                         } for j in await i.get_dishes()
                     ]
