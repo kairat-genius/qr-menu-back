@@ -1,6 +1,7 @@
 from email.mime import text as t, multipart as m
 import smtplib
 import os
+import email.mime.image as i
 
 from ...celery.object import celery
 from ....settings import (SENDER_EMAIL, SENDER_PASSWORD,
@@ -15,7 +16,7 @@ SERVER = os.environ.get("SMTP_SERVER", SMTP_SERVER)
 
 def setup_message(*args):
     """Створення повідомлення для відправки"""
-    e, s, b = args
+    e, s, b, image = args
 
     msg = m.MIMEMultipart()
     msg["Subject"] = s
@@ -24,12 +25,26 @@ def setup_message(*args):
 
     msg.attach(t.MIMEText(b, "plain"))
 
+    if image:
+        html_body = f"""\
+                <html>
+                    <body>
+                        <img src="cid:image">
+                    </body>
+                </html>
+                """
+        msg.attach(t.MIMEText(html_body, "html"))
+
+        image_part = i.MIMEImage(image)
+        image_part.add_header('Content-ID', '<image>')
+        msg.attach(image_part)
+
     return msg
 
 @celery.task
-def send_mail(email_to: str, theme: str, body: str) -> dict | Exception:
+def send_mail(email_to: str, theme: str, body: str, image=None) -> dict | Exception:
     try:
-        msg = setup_message(email_to, theme, body)
+        msg = setup_message(email_to, theme, body, image)
         with smtplib.SMTP_SSL(host=SERVER, port=PORT) as smtp:
             smtp.login(EMAIL, PASS)
             smtp.sendmail(EMAIL, email_to, msg.as_bytes())
