@@ -1,4 +1,6 @@
-from ....database.tables  import dishes
+from sqlalchemy.exc import NoResultFound
+
+from ....database.tables import dishes
 from fastapi import HTTPException
 from ..dishes import Dish
 
@@ -24,6 +26,19 @@ class RestaurantDish:
             )
         
         return Dish(**new_dish)
+
+    async def update_dish(self, dish_id: int, **kwargs):
+        news_dish = await self.async_update_data(
+            instance=dishes,
+            and__=(
+                dishes.c.id == dish_id,
+                dishes.c.restaurant_id == self.id
+            ),
+             **kwargs
+        )
+
+        return Dish(**kwargs)
+
 
     async def get_dishes(self, category_id: int) -> list[Dish]:
         dish = await self.async_get_where(

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, validator
 from fastapi.exceptions import HTTPException
-
+from typing import Optional
 from ....settings import DISHES_IMG
 from ....framework import t
 
@@ -21,5 +21,15 @@ class Dish(BaseModel):
 
             if status is False:
                 raise HTTPException(status_code=code, detail=msg)
-            
+
         return value
+
+
+class DishUpdate(Dish):
+    name: Optional[str] = None
+    price: Optional[int] = None
+    weight: Optional[int] = None
+    comment: Optional[str] = Field(None, description="Коментар для блюда (необов'язковий)")
+    category_id: Optional[int] = None
+
+

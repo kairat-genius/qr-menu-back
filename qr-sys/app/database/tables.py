@@ -3,6 +3,7 @@ from sqlalchemy import (Table, Column, Integer, String,
                         ForeignKey, VARCHAR, ARRAY)
 
 
+
 # create tables here 
 authefication = Table(
     'authefication',

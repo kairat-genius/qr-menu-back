@@ -117,7 +117,6 @@ class async_db:
         else:
             self.err(instance)
 
-
     async def async_delete_data(self, instance: object,
                                  and__ = None, exp=None):
         if self._check_obj_instance(instance):

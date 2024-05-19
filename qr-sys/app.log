@@ -1,0 +1,2 @@
+2024-05-19 15:29:50,733 - INFO: token eyJhbGciOi is valid
+2024-05-19 15:29:50,808 - INFO: update dict_keys(['name', 'comment', 'category_id']) in dishes
