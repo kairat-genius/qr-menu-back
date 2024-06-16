@@ -10,7 +10,7 @@ from .....ValidationModels.Tables import DeleteType
 from .....tags import TABLES
 
 
-@app.delete('/api/admin/delete/tables', tags=[TABLES])
+@app.delete('/admin/delete/tables', tags=[TABLES])
 async def delete_tables(type: DeleteType, table_number: int = 0, hashf: str = Depends(jwt)) -> RegisterResponseFail:
 
     """

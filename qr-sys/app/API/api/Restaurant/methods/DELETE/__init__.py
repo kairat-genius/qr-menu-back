@@ -6,7 +6,7 @@ from .....ResponseModels.Register import RegisterResponseFail
 from .....tags import RESTAURANT
 
 
-@app.delete('/api/admin/delete/restaurant', tags=[RESTAURANT])
+@app.delete('/admin/delete/restaurant', tags=[RESTAURANT])
 async def restaurant_delete(hashf: str = Depends(jwt)) -> RegisterResponseFail:
 
     user = await Person(hashf=hashf).initialize()

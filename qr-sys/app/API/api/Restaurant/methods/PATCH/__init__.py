@@ -6,7 +6,7 @@ from .....tags import RESTAURANT
 from fastapi import Depends
 
 
-@app.patch('/api/admin/update/restaurant', tags=[RESTAURANT])
+@app.patch('/admin/update/restaurant', tags=[RESTAURANT])
 async def restaurant_data_update(data: RestaurantUpdate, hashf: str = Depends(jwt)) -> RestaurantData:
 
     new_data = {k: v for k, v in data.model_dump().items() if v}
@@ -20,7 +20,7 @@ async def restaurant_data_update(data: RestaurantUpdate, hashf: str = Depends(jw
     return JSONResponse(status_code=200, content=restaurant.get_data())
 
 
-@app.patch("/api/admin/delete/data", tags=[RESTAURANT])
+@app.patch("/admin/delete/data", tags=[RESTAURANT])
 async def delete_restaurant_data(data: RestaurantDataDelete, hashf: str = Depends(jwt)) -> RestaurantData:
     
     """

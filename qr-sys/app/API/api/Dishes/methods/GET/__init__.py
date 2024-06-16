@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi import Depends
 
 
-@app.get('/api/admin/get/dish', tags=[DISHES])
+@app.get('/admin/get/dish', tags=[DISHES])
 async def get_dishes(category_id: int, hashf: str = Depends(jwt)) -> List[Dish]:
 
     user = await Person(hashf=hashf).initialize()

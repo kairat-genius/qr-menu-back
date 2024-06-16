@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from .....tags import USER
 
 
-@app.put("/api/admin/recovery/password", tags=[USER])
+@app.put("/admin/recovery/password", tags=[USER])
 async def recovery_password(data: RecoveryPassword) -> RegisterResponseFail:
 
     """

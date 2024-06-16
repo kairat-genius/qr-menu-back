@@ -14,7 +14,7 @@ from .....tags import USER, EMAIL
 
 
 
-@app.post('/api/admin/register', tags=[USER])
+@app.post('/admin/register', tags=[USER])
 async def register(data: RegisterUser) -> (RegisterResponseFail):
 
     hashf = t.get_hash(data.email + data.password)
@@ -43,7 +43,7 @@ async def register(data: RegisterUser) -> (RegisterResponseFail):
     return response
 
 
-@app.post("/api/admin/login", tags=[USER])
+@app.post("/admin/login", tags=[USER])
 async def login(data: LoginByLP) -> RegisterResponseFail:
 
     email, password, time_type, time = data.email, t.get_hash(data.password), data.time.type, data.time.number
@@ -64,7 +64,7 @@ async def login(data: LoginByLP) -> RegisterResponseFail:
     
 
 
-@app.post('/api/admin/set/recovery/code', tags=[USER, EMAIL])
+@app.post('/admin/set/recovery/code', tags=[USER, EMAIL])
 async def set_recovery_code(data: ValidationEmail) -> RegisterResponseFail:
 
     """
@@ -90,7 +90,7 @@ async def set_recovery_code(data: ValidationEmail) -> RegisterResponseFail:
         raise HTTPException(status_code=500, detail="Невідома помилка під час обробки транзакії")
 
 
-@app.post("/api/admin/recovery/code/check", tags=[USER])
+@app.post("/admin/recovery/code/check", tags=[USER])
 async def recovery_code_check(data: Recovery) -> ResponseCheckRecovery:
 
     """
@@ -108,7 +108,7 @@ async def recovery_code_check(data: Recovery) -> ResponseCheckRecovery:
     raise HTTPException(status_code=403, detail="Введений код не дійсний")
 
 
-@app.post("/api/admin/set/delete/code", tags=[USER, EMAIL])
+@app.post("/admin/set/delete/code", tags=[USER, EMAIL])
 async def delete_email_code(hashf: str = Depends(jwt)) -> RegisterResponseFail:
     
     user = await Person(hashf=hashf).initialize()

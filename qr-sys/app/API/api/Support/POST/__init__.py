@@ -6,7 +6,7 @@ import base64
 from fastapi.responses import JSONResponse
 
 
-@app.post("/api/admin/support/email", tags=[SUPPORT])
+@app.post("/admin/support/email", tags=[SUPPORT])
 async def support(data: EmailSupport, hashf: str = Depends(jwt)) -> dict:
     try:
         user = await Person(hashf=hashf).initialize()

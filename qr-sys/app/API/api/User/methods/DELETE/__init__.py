@@ -9,7 +9,7 @@ from ......settings import COOKIE_KEY
 from .....tags import USER
 
 
-@app.delete('/api/admin/delete/session/user', tags=[USER], dependencies=[Depends(jwt)])
+@app.delete('/admin/delete/session/user', tags=[USER], dependencies=[Depends(jwt)])
 async def delete_user_from_session():
     """
     <h1>Вихід користувача з системи</h1>
@@ -23,7 +23,7 @@ async def delete_user_from_session():
 
     return response
 
-@app.delete('/api/admin/delete/user', tags=[USER])
+@app.delete('/admin/delete/user', tags=[USER])
 async def delete_user(data: DeleteUser, hashf: str = Depends(jwt)) -> ResponseCheckDelete:
 
     """

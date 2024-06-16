@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi import Depends
 
 
-@app.post('/api/admin/add/restaurant', tags=[RESTAURANT])
+@app.post('/admin/add/restaurant', tags=[RESTAURANT])
 async def restaurant_add(data: RestaurantRegister, hashf: str = Depends(jwt)) -> RestaurantData:
 
     """

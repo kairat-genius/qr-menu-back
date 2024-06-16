@@ -7,7 +7,7 @@ from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 
 
-@app.post("/api/admin/send_email", tags=[EMAIL])
+@app.post("/admin/send_email", tags=[EMAIL])
 async def send_email(data: EmailMsg) -> RegisterResponseFail:
     try:
         send_mail.delay(data.email_to, data.theme, data.body)

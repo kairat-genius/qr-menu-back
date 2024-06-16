@@ -7,7 +7,7 @@ from fastapi.exceptions import HTTPException
 from fastapi import Depends
 
 
-@app.get('/api/admin/get/tables', tags=[TABLES])
+@app.get('/admin/get/tables', tags=[TABLES])
 async def get_tables(page: int = 1, hashf: str = Depends(jwt)) -> GetTablesResponse:
     try: 
         restaurant_id = await db.async_get_where(restaurant.c.id, exp=restaurant.c.hashf == hashf,

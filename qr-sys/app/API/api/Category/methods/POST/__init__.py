@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi import Depends
 
 
-@app.post('/api/admin/add/category', tags=[CATEGORY])
+@app.post('/admin/add/category', tags=[CATEGORY])
 async def add_category(data: CategorySet, hashf: str = Depends(jwt)) -> CategoryTable:
 
     user = await Person(hashf=hashf).initialize()

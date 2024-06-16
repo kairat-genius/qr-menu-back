@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from fastapi import Depends
 
 
-@app.post('/api/admin/add/dish', tags=[DISHES])
+@app.post('/admin/add/dish', tags=[DISHES])
 async def add_dish(data: Dish, hashf: str = Depends(jwt)) -> Dish:
 
     insert_data = data.model_dump()

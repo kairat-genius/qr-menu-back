@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from fastapi import Depends
 
 
-@app.delete('/api/admin/delete/dish', tags=[DISHES])
+@app.delete('/admin/delete/dish', tags=[DISHES])
 async def delete_dish(dish_id: int, category_id: int, hashf: str = Depends(jwt)) -> RegisterResponseFail:
     dish, category = dish_id, category_id
 

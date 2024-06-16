@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi import Depends
 
 
-@app.post('/api/admin/add/ingredient', tags=[INGREDIENTS])
+@app.post('/admin/add/ingredient', tags=[INGREDIENTS])
 async def add_ingredient(data: IngredientScheme, hashf: str = Depends(jwt)) -> Ingredient:
     ingredient_data, dish_id = data.ingredient, data.dish_id
 

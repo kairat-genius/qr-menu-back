@@ -10,7 +10,7 @@ from ......database.tables import (restaurant)
 from .....tags import TABLES
 
 
-@app.post('/api/admin/create/tables', tags=[TABLES])
+@app.post('/admin/create/tables', tags=[TABLES])
 async def add_tables(data: CreateTable, hashf: str = Depends(jwt)) -> RegisterResponseFail:
     num, logo, background, fill = data.table_number, data.logo, data.background, data.fill_lines
 

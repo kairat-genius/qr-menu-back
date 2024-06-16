@@ -7,7 +7,7 @@ from fastapi import Depends
 
 
 
-@app.get('/api/admin/get/categories', tags=[CATEGORY])
+@app.get('/admin/get/categories', tags=[CATEGORY])
 async def get_categories(hashf: str = Depends(jwt)) -> GetCategories:
 
     user = await Person(hashf=hashf).initialize()

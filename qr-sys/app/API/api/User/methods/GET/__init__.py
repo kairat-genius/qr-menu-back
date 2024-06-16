@@ -7,7 +7,7 @@ from fastapi import Depends
 from .....tags import USER
 
 
-@app.get("/api/admin/login/token", tags=[USER])
+@app.get("/admin/login/token", tags=[USER])
 async def login_by_token(hashf: str = Depends(jwt)) -> RegisterUserData:
 
     """
@@ -26,7 +26,7 @@ async def login_by_token(hashf: str = Depends(jwt)) -> RegisterUserData:
 
 
 
-@app.get("/api/admin/get-full-info/user", tags=[USER])
+@app.get("/admin/get-full-info/user", tags=[USER])
 async def get_full_info_from_user(hashf: str = Depends(jwt)):
     """
     <h1>Метод для отримання повної інформації про користувача</h1>
