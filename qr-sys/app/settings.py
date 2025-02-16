@@ -10,11 +10,11 @@ COOKIE_KEY = "QR_MENU_TOKEN"
 
 
 # DATABASE
-DATABASE="postgresql+asyncpg://test:test@localhost:5435/test"
-DATABASE_SYNC="postgresql://test:test@localhost:5435/test"
+DATABASE="postgresql+asyncpg://user:user@localhost:5432/QR-Menu-Back"
+DATABASE_SYNC="postgresql://user:user@localhost:5432/QR-Menu-Back"
 
 # redis
-REDIS_PASSWORD="redistest"
+REDIS_PASSWORD=""
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
 REDIS_DB = 0

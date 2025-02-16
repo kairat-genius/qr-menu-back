@@ -1,0 +1,414 @@
+2024-12-21 01:09:56 - INFO - Logging initialized in directory: /Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/API/api/Category/methods/POST
+2024-12-21 01:10:19 - INFO - token eyJhbGciOi is valid
+2024-12-21 01:10:19 - INFO - Received data: category="string'" color="stri'ng"
+2024-12-21 01:10:20 - INFO - User initialized: <app.framework.person.object.Person object at 0x118ad1be0>
+2024-12-21 01:10:20 - INFO - Restaurant retrieved: <app.framework.person.restaurant.Restaurant object at 0x118a2ddf0>
+2024-12-21 01:10:20 - INFO - insert dict_keys(['category', 'color', 'restaurant_id']) into categories
+2024-12-21 01:10:20 - ERROR - 
+Object: Restaurant
+func: add_categoryError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.PostgresSyntaxError'>: syntax error at or near "stri"
+[SQL: SELECT categories.id, categories.category, categories.color, categories.restaurant_id 
+FROM categories 
+WHERE categories.category='string'' AND categories.color='stri'ng' AND categories.restaurant_id='1']
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2024-12-21 01:10:20 - ERROR - Error adding category: 500: Невідома помилка під час транзакції
+Traceback (most recent call last):
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 522, in _prepare_and_execute
+    prepared_stmt, attributes = await adapt_connection._prepare(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 773, in _prepare
+    prepared_stmt = await self._connection.prepare(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/asyncpg/connection.py", line 636, in prepare
+    return await self._prepare(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/asyncpg/connection.py", line 654, in _prepare
+    stmt = await self._get_statement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/asyncpg/connection.py", line 433, in _get_statement
+    statement = await self._protocol.prepare(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 166, in prepare
+asyncpg.exceptions.PostgresSyntaxError: syntax error at or near "stri"
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 922, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 580, in execute
+    self._adapt_connection.await_(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 130, in await_only
+    return current.driver.switch(awaitable)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 195, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 558, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 509, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.ProgrammingError: <class 'asyncpg.exceptions.PostgresSyntaxError'>: syntax error at or near "stri"
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/framework/person/restaurant/category.py", line 41, in add_category
+    categ = await self.async_insert_data(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/database/db/models/_async/__init__.py", line 50, in async_insert_data
+    return await self.async_get_where(instance, exp=query, all_=False, to_dict=to_dict)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/database/db/models/_async/__init__.py", line 78, in async_get_where
+    result = await transaction.session.execute(query)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/ext/asyncio/session.py", line 455, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 200, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2308, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2199, in _execute_internal
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 517, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1639, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2344, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 922, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 580, in execute
+    self._adapt_connection.await_(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 130, in await_only
+    return current.driver.switch(awaitable)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 195, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 558, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 509, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.exc.ProgrammingError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.PostgresSyntaxError'>: syntax error at or near "stri"
+[SQL: SELECT categories.id, categories.category, categories.color, categories.restaurant_id 
+FROM categories 
+WHERE categories.category='string'' AND categories.color='stri'ng' AND categories.restaurant_id='1']
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/API/api/Category/methods/POST/__init__.py", line 27, in add_category
+    new_category = await restaurant.add_category(**data.model_dump())
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/framework/person/restaurant/category.py", line 47, in add_category
+    raise self._throw_exeption_500(
+fastapi.exceptions.HTTPException: 500: Невідома помилка під час транзакції
+2024-12-21 01:11:41 - INFO - token eyJhbGciOi is valid
+2024-12-21 01:11:41 - INFO - Received data: category="string'" color="stri'ng"
+2024-12-21 01:11:41 - INFO - User initialized: <app.framework.person.object.Person object at 0x118ad1b20>
+2024-12-21 01:11:41 - INFO - Restaurant retrieved: <app.framework.person.restaurant.Restaurant object at 0x118ad1be0>
+2024-12-21 01:11:41 - INFO - insert dict_keys(['category', 'color', 'restaurant_id']) into categories
+2024-12-21 01:11:41 - ERROR - 
+Object: Restaurant
+func: add_categoryError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.PostgresSyntaxError'>: syntax error at or near "stri"
+[SQL: SELECT categories.id, categories.category, categories.color, categories.restaurant_id 
+FROM categories 
+WHERE categories.category='string'' AND categories.color='stri'ng' AND categories.restaurant_id='1']
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2024-12-21 01:11:41 - ERROR - Error adding category: 500: Невідома помилка під час транзакції
+Traceback (most recent call last):
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 522, in _prepare_and_execute
+    prepared_stmt, attributes = await adapt_connection._prepare(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 773, in _prepare
+    prepared_stmt = await self._connection.prepare(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/asyncpg/connection.py", line 636, in prepare
+    return await self._prepare(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/asyncpg/connection.py", line 654, in _prepare
+    stmt = await self._get_statement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/asyncpg/connection.py", line 433, in _get_statement
+    statement = await self._protocol.prepare(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 166, in prepare
+asyncpg.exceptions.PostgresSyntaxError: syntax error at or near "stri"
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 922, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 580, in execute
+    self._adapt_connection.await_(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 130, in await_only
+    return current.driver.switch(awaitable)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 195, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 558, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 509, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.ProgrammingError: <class 'asyncpg.exceptions.PostgresSyntaxError'>: syntax error at or near "stri"
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/framework/person/restaurant/category.py", line 41, in add_category
+    categ = await self.async_insert_data(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/database/db/models/_async/__init__.py", line 50, in async_insert_data
+    return await self.async_get_where(instance, exp=query, all_=False, to_dict=to_dict)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/database/db/models/_async/__init__.py", line 78, in async_get_where
+    result = await transaction.session.execute(query)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/ext/asyncio/session.py", line 455, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 200, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2308, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2199, in _execute_internal
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 517, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1639, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2344, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 922, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 580, in execute
+    self._adapt_connection.await_(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 130, in await_only
+    return current.driver.switch(awaitable)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 195, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 558, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 509, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.exc.ProgrammingError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.PostgresSyntaxError'>: syntax error at or near "stri"
+[SQL: SELECT categories.id, categories.category, categories.color, categories.restaurant_id 
+FROM categories 
+WHERE categories.category='string'' AND categories.color='stri'ng' AND categories.restaurant_id='1']
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/API/api/Category/methods/POST/__init__.py", line 27, in add_category
+    new_category = await restaurant.add_category(**data.model_dump())
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/framework/person/restaurant/category.py", line 47, in add_category
+    raise self._throw_exeption_500(
+fastapi.exceptions.HTTPException: 500: Невідома помилка під час транзакції
+2024-12-21 01:11:59 - INFO - token eyJhbGciOi is valid
+2024-12-21 01:11:59 - INFO - Received data: category="string'" color="stri'ng"
+2024-12-21 01:11:59 - INFO - User initialized: <app.framework.person.object.Person object at 0x118acb290>
+2024-12-21 01:11:59 - INFO - Restaurant retrieved: <app.framework.person.restaurant.Restaurant object at 0x118a0b7a0>
+2024-12-21 01:11:59 - INFO - insert dict_keys(['category', 'color', 'restaurant_id']) into categories
+2024-12-21 01:11:59 - ERROR - 
+Object: Restaurant
+func: add_categoryError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.PostgresSyntaxError'>: syntax error at or near "stri"
+[SQL: SELECT categories.id, categories.category, categories.color, categories.restaurant_id 
+FROM categories 
+WHERE categories.category='string'' AND categories.color='stri'ng' AND categories.restaurant_id='1']
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2024-12-21 01:11:59 - ERROR - Error adding category: 500: Невідома помилка під час транзакції
+Traceback (most recent call last):
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 522, in _prepare_and_execute
+    prepared_stmt, attributes = await adapt_connection._prepare(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 773, in _prepare
+    prepared_stmt = await self._connection.prepare(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/asyncpg/connection.py", line 636, in prepare
+    return await self._prepare(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/asyncpg/connection.py", line 654, in _prepare
+    stmt = await self._get_statement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/asyncpg/connection.py", line 433, in _get_statement
+    statement = await self._protocol.prepare(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 166, in prepare
+asyncpg.exceptions.PostgresSyntaxError: syntax error at or near "stri"
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 922, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 580, in execute
+    self._adapt_connection.await_(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 130, in await_only
+    return current.driver.switch(awaitable)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 195, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 558, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 509, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.ProgrammingError: <class 'asyncpg.exceptions.PostgresSyntaxError'>: syntax error at or near "stri"
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/framework/person/restaurant/category.py", line 41, in add_category
+    categ = await self.async_insert_data(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/database/db/models/_async/__init__.py", line 50, in async_insert_data
+    return await self.async_get_where(instance, exp=query, all_=False, to_dict=to_dict)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/database/db/models/_async/__init__.py", line 78, in async_get_where
+    result = await transaction.session.execute(query)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/ext/asyncio/session.py", line 455, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 200, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2308, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2199, in _execute_internal
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 517, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1639, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2344, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 922, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 580, in execute
+    self._adapt_connection.await_(
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 130, in await_only
+    return current.driver.switch(awaitable)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 195, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 558, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 509, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/andruuy/Documents/Study/qr-menu-back/.venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.exc.ProgrammingError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.PostgresSyntaxError'>: syntax error at or near "stri"
+[SQL: SELECT categories.id, categories.category, categories.color, categories.restaurant_id 
+FROM categories 
+WHERE categories.category='string'' AND categories.color='stri'ng' AND categories.restaurant_id='1']
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/API/api/Category/methods/POST/__init__.py", line 27, in add_category
+    new_category = await restaurant.add_category(**data.model_dump())
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/framework/person/restaurant/category.py", line 47, in add_category
+    raise self._throw_exeption_500(
+fastapi.exceptions.HTTPException: 500: Невідома помилка під час транзакції
+2024-12-21 16:59:33 - INFO - Logging initialized in directory: /Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/API/api/Category/methods/POST
+2024-12-21 17:00:09 - INFO - token eyJhbGciOi is valid
+2024-12-21 17:00:09 - INFO - Received data: category="string'" color="stri'ng"
+2024-12-21 17:00:09 - INFO - User initialized: <app.framework.person.object.Person object at 0x108f06a50>
+2024-12-21 17:00:09 - INFO - Restaurant retrieved: <app.framework.person.restaurant.Restaurant object at 0x108b72cc0>
+2024-12-21 17:00:09 - INFO - insert dict_keys(['category', 'color', 'restaurant_id']) into categories
+2024-12-21 17:00:09 - INFO - Category added successfully: <app.framework.person.categories.Category object at 0x108f07890>
+2024-12-21 17:06:06 - INFO - Logging initialized in directory: /Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/API/api/Category/methods/POST
+2024-12-21 17:06:23 - INFO - token eyJhbGciOi is valid
+2024-12-21 17:06:23 - INFO - Received data: category='stdfadring' color='strasdsf4534324ing'
+2024-12-21 17:06:23 - INFO - User initialized: <app.framework.person.object.Person object at 0x113e070e0>
+2024-12-21 17:06:23 - INFO - Restaurant retrieved: <app.framework.person.restaurant.Restaurant object at 0x113da2900>
+2024-12-21 17:06:23 - INFO - insert dict_keys(['category', 'color', 'restaurant_id']) into categories
+2024-12-21 17:06:23 - INFO - Category added successfully: <app.framework.person.categories.Category object at 0x110c95f40>
+2024-12-21 17:10:15 - INFO - Logging initialized in directory: /Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/API/api/Category/methods/POST
+2024-12-21 17:10:24 - INFO - token eyJhbGciOi is valid
+2024-12-21 17:10:24 - INFO - Received data: category='string' color='string'
+2024-12-21 17:10:24 - INFO - User initialized: <app.framework.person.object.Person object at 0x1350d67e0>
+2024-12-21 17:10:24 - INFO - Restaurant retrieved: <app.framework.person.restaurant.Restaurant object at 0x134edddf0>
+2024-12-21 17:10:24 - INFO - insert dict_keys(['category', 'color', 'restaurant_id']) into categories
+2024-12-21 17:10:24 - INFO - Category added successfully: <app.framework.person.categories.Category object at 0x135009190>
+2024-12-21 17:10:48 - INFO - token eyJhbGciOi is valid
+2024-12-21 17:10:48 - INFO - Received data: category='' color=''
+2024-12-21 17:10:48 - INFO - User initialized: <app.framework.person.object.Person object at 0x1067240b0>
+2024-12-21 17:10:48 - INFO - Restaurant retrieved: <app.framework.person.restaurant.Restaurant object at 0x1350d67e0>
+2024-12-21 17:10:48 - INFO - insert dict_keys(['category', 'color', 'restaurant_id']) into categories
+2024-12-21 17:10:48 - INFO - Category added successfully: <app.framework.person.categories.Category object at 0x134edd970>
+2025-01-07 11:36:44 - INFO - Logging initialized in directory: /Users/andruuy/Documents/Study/qr-menu-back/qr-sys/app/API/api/Category/methods/POST
+2025-01-07 11:37:35 - INFO - 473287f829 hash created

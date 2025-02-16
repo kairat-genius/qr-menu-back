@@ -37,7 +37,7 @@ categories = Table(
 
     Column('id', Integer, primary_key=True),
     Column('category', VARCHAR, nullable=False),
-    Column('color', ARRAY(Integer)),
+    Column('color', String, nullable=True),
     Column('restaurant_id', Integer, ForeignKey('restaurant.id', ondelete='CASCADE'))
 )
 

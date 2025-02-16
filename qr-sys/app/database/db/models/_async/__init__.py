@@ -18,19 +18,30 @@ class async_db:
         raise ValueError(f'{msg} is not instance of sqlalchemy.sql.schema.Table')
 
 
-    def _check_obj_instance(self, instance: object) -> object | ValueError:
-        try:
-            return instance.name in tables_names
-        except Exception:
+    def _check_obj_instance(self, instance: object) -> bool:
+        if not hasattr(instance, 'name') or instance.name not in tables_names:
             self.err(instance)
+        return True
+    # def _check_obj_instance(self, instance: object) -> object | ValueError:
+    #     try:
+    #         return instance.name in tables_names
+    #     except Exception:
+    #         self.err(instance)
 
 
     async def get_async_session(self) -> AsyncSession:
-        return sessionmaker(
-                bind=engine,
-                class_=AsyncSession,
-                expire_on_commit=False
-            )()
+        async_session = sessionmaker(
+            bind=engine,
+            class_=AsyncSession,
+            expire_on_commit=False
+        )
+        return async_session()
+    # async def get_async_session(self) -> AsyncSession:
+    #     return sessionmaker(
+    #             bind=engine,
+    #             class_=AsyncSession,
+    #             expire_on_commit=False
+    #         )()
 
 
     async def async_insert_data(self, instance: object, to_dict: bool = False, **kwargs):
@@ -44,8 +55,9 @@ class async_db:
                 await transaction.commit()
             
             logger.info(f'insert {kwargs.keys()} into {instance}')
-            query = text(''.join([f"{instance.name}.{k}='{v}' AND " 
-                                  for k, v in kwargs.items() if v and isinstance(v, list) is False])[:-5])    
+            query = and_(*[getattr(instance.c, k) == v for k, v in kwargs.items() if v])
+            # query = text(''.join([f"{instance.name}.{k}='{v}' AND "
+            #                       for k, v in kwargs.items() if v and isinstance(v, list) is False])[:-5])
 
             return await self.async_get_where(instance, exp=query, all_=False, to_dict=to_dict) 
             
