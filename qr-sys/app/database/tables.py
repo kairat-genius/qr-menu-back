@@ -11,7 +11,8 @@ authefication = Table(
     
     Column('id', Integer, primary_key=True),
     Column('hashf', String, unique=True, nullable=False),
-    Column('email', String, nullable=False, unique=True),
+    Column('name', String, unique=True, nullable=False),
+    Column('email', String, unique=True, nullable=False),
     Column('password', String, nullable=False)
 )
 
