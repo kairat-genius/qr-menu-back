@@ -7,11 +7,17 @@
 -Виконання фонових задач за допомогою Celery
 
 Технологічний стек:
+
 *Python
+
 *FastAPI
+
 *PostgreSQL
+
 *Redis
+
 *Celery
+
 *Flower
 
 
