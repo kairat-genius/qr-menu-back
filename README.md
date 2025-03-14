@@ -61,7 +61,12 @@ user@~: alembic revision --autogenerate
 user@~: alembic upgrade head
 ```
 
-4. Так само потрібно запустити redis, він відповідає за збережння куків користувача.
+3. Так само потрібно запустити redis, він відповідає за збережння куків користувача.
+
+```bash
+docker run --name qr-menu-redis -p 6379:6379 -d redis
+```
+
    Налаштування порту, хосту та бази данних також знаходяться в *app/settings.py*.
 
 
