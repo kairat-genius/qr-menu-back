@@ -50,18 +50,22 @@ pip install fastapi uvicorn sqlalchemy psycopg2-binary redis celery python-multi
 docker run --name qr-menu-postgres -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres
 ```
 
+Заповнити потрібно обидві константи як DATABASE (асинхронне підключення) та DATABASE_SYNC (синхроне).
 
-    Заповнити потрібно обидві константи
-    як DATABASE (асинхронне підключення) та DATABASE_SYNC (синхроне).
-
-4. Ініціалізація бази данних та створення всіх таблиць
+3. Ініціалізація бази данних та створення всіх таблиць
 
 ```bash
 user@~: alembic revision --autogenerate
 user@~: alembic upgrade head
 ```
+Якщо міграції відсутні, створіть базу через SQLAlchemy:
 
-3. Так само потрібно запустити redis, він відповідає за збережння куків користувача.
+```bash
+from app.database import Base, engine
+Base.metadata.create_all(bind=engine)
+```
+
+4. Так само потрібно запустити redis, він відповідає за збережння куків користувача.
 
 ```bash
 docker run --name qr-menu-redis -p 6379:6379 -d redis
@@ -99,6 +103,10 @@ user@~: uvicorn app.API.api:app --host:<host> --port:<port>
 ```
 
 * Або можете запустити додаток за допомогою *Dockerfile*
+
+Перевірка роботи
+Відкрийте http://localhost:8000/docs для доступу до Swagger UI.
+Переконайтеся, що Redis та PostgreSQL активні (наприклад, через docker ps).
 
 
 # Файлова система проекту qr-sys
