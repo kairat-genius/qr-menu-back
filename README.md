@@ -35,6 +35,14 @@
 ```bash
 user@~: pip install -r requirements.txt
 ```
+
+Якщо файл requirements.txt відсутній, встановіть основні бібліотеки:
+
+```bash
+pip install fastapi uvicorn sqlalchemy psycopg2-binary redis celery python-multipart python-jose[cryptography] passlib[bcrypt] python-dotenv
+```
+
+
 2. Також потрібно запустити PostgreSQL базу данних через докер або pgAdmin
    та вказати посилання в файлі *app/settings.py*. Заповнити потрібно обидві константи
     як DATABASE (асинхронне підключення) та DATABASE_SYNC (синхроне).
