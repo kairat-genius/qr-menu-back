@@ -44,10 +44,17 @@ pip install fastapi uvicorn sqlalchemy psycopg2-binary redis celery python-multi
 
 
 2. Також потрібно запустити PostgreSQL базу данних через докер або pgAdmin
-   та вказати посилання в файлі *app/settings.py*. Заповнити потрібно обидві константи
+   та вказати посилання в файлі *app/settings.py*.
+
+```bash
+docker run --name qr-menu-postgres -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres
+```
+
+
+    Заповнити потрібно обидві константи
     як DATABASE (асинхронне підключення) та DATABASE_SYNC (синхроне).
 
-3. Ініціалізація бази данних та створення всіх таблиць
+4. Ініціалізація бази данних та створення всіх таблиць
 
 ```bash
 user@~: alembic revision --autogenerate
