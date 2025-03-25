@@ -165,7 +165,11 @@ user@~: uvicorn app.API.api:app --host:<host> --port:<port>
 
 > Використовує PostgreSQL базу данних
 
-# Вкрсія latest
+# Версія latest
 > + Redis
 > + Celery
 > + Flower
+
+# API Docs
+
+https://qr-menu.pp.ua/api/docs#/
