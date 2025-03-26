@@ -14,7 +14,7 @@ async def restaurant_add(data: RestaurantRegister, hashf: str = Depends(jwt)) ->
     
     <h1>Створення закладу користувача</h1>
     <br>
-    <p>Для використання цього та наступних методів у вас вже <strong>повнен</strong> бути в cookie JWT токен</p>
+    <p>Для використання цього та наступних методів у вас вже <strong>повинен</strong> бути в cookie JWT токен</p>
     
     """
 
